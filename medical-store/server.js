@@ -7,6 +7,7 @@ const path = require('path');
 const fs = require('fs');
 
 const seedMedicines = require('./lib/seed-medicines');
+const { validateCheckout } = require('./lib/checkout-validation');
 
 const app = express();
 const PORT = 8080;
@@ -234,6 +235,55 @@ function buildStateOptions() {
   }).join('');
 }
 
+function buildStateOptionsSelected(selectedCode) {
+  return US_STATES.map(function (s) {
+    var sel = s.code === selectedCode ? ' selected' : '';
+    return '<option value="' + s.code + '"' + sel + '>' + escapeHtml(s.name) + '</option>';
+  }).join('');
+}
+
+var CHECKOUT_FORM_FIELDS = [
+  'email', 'contact_number', 'secondary_phone', 'first_name', 'last_name',
+  'shipping_street', 'shipping_line2', 'shipping_city', 'shipping_state', 'shipping_postal',
+  'billing_first_name', 'billing_last_name', 'billing_street', 'billing_line2',
+  'billing_city', 'billing_state', 'billing_postal', 'order_notes'
+];
+
+function buildCheckoutReplacements(body, errors) {
+  body = body || {};
+  errors = errors || {};
+  var rep = {};
+  CHECKOUT_FORM_FIELDS.forEach(function (field) {
+    rep['VALUE_' + field] = escapeHtml(body[field] || '');
+    rep['CLASS_' + field] = errors[field] ? 'input-invalid' : '';
+    rep['ERROR_' + field] = escapeHtml(errors[field] || '');
+  });
+  rep.BILLING_SAME_CHECKED = body.billing_same_as_shipping === 'on' || body.billing_same_as_shipping === undefined ? 'checked' : '';
+  rep.TERMS_CHECKED = body.terms_accepted === 'on' ? 'checked' : '';
+  rep.MARKETING_CHECKED = body.marketing_consent === 'on' ? 'checked' : '';
+  rep.CHECKOUT_FORM_ERROR = Object.keys(errors).length > 0
+    ? 'Please correct the highlighted fields before submitting.'
+    : '';
+  return rep;
+}
+
+function renderCheckoutPage(req, products, body, errors) {
+  body = body || {};
+  errors = errors || {};
+  var html = renderPage('checkout.html', req, buildCheckoutReplacements(body, errors));
+  html = html.replace('<!-- ORDER_SUMMARY -->', buildOrderSummaryItems(products));
+  html = html.replace('<!-- PRODUCT_ID -->', products.length === 1 ? String(products[0].id) : escapeHtml(body.product_id || ''));
+  html = html.replace('<!-- US_STATES_OPTIONS -->', buildStateOptionsSelected(body.shipping_state || ''));
+  html = html.replace('<!-- US_STATES_OPTIONS -->', buildStateOptionsSelected(body.billing_state || ''));
+  if (Object.keys(errors).length > 0) {
+    html = html.replace('id="checkout-form-error" class="checkout-form-error" role="alert" hidden', 'id="checkout-form-error" class="checkout-form-error" role="alert"');
+    Object.keys(errors).forEach(function (key) {
+      html = html.replace('id="' + key + '_error" class="field-error" hidden', 'id="' + key + '_error" class="field-error"');
+    });
+  }
+  return html;
+}
+
 function buildOrderSummaryItems(products) {
   if (!products || products.length === 0) {
     return '<p class="order-summary-empty">Your cart is empty. <a href="/collections">Browse medicines</a></p>';
@@ -413,11 +463,7 @@ app.get('/cart', function (req, res) {
 app.get('/checkout', function (req, res) {
   var productId = req.query.product_id || req.query.id;
   function sendCheckout(products) {
-    var html = renderPage('checkout.html', req, {});
-    html = html.replace('<!-- ORDER_SUMMARY -->', buildOrderSummaryItems(products));
-    html = html.replace('<!-- PRODUCT_ID -->', products.length === 1 ? String(products[0].id) : '');
-    html = html.replace(/<!-- US_STATES_OPTIONS -->/g, buildStateOptions());
-    res.type('html').send(html);
+    res.type('html').send(renderCheckoutPage(req, products, {}, {}));
   }
   if (productId) {
     db.get('SELECT * FROM products WHERE id = ?', [productId], function (err, p) {
@@ -460,6 +506,13 @@ app.post('/submit-order', function (req, res) {
       '<main class="page-centered section-padding"><div class="container-shell success-card error-card"><h1>Terms Required</h1><p>Please accept the terms to continue.</p><a href="/checkout" class="btn-primary">Return to Checkout</a></div></main>',
       req
     ));
+  }
+  var validation = validateCheckout(body);
+  if (!validation.ok) {
+    return loadCartProducts(req, function (err, cartProducts) {
+      if (err) return res.status(500).send('Database error');
+      res.status(400).type('html').send(renderCheckoutPage(req, cartProducts, body, validation.errors));
+    });
   }
   loadCartProducts(req, function (err, cartProducts) {
     var product_id = body.product_id || (cartProducts[0] ? cartProducts[0].id : null);

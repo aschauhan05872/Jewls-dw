@@ -740,6 +740,33 @@ select:focus-visible {
   margin: -0.25rem 0 0.5rem;
 }
 
+.field-error {
+  display: block;
+  font-size: 0.8125rem;
+  color: #b91c1c;
+  margin-top: 0.375rem;
+}
+
+.field-error[hidden] { display: none; }
+
+.checkout-form input.input-invalid,
+.checkout-form select.input-invalid,
+.checkout-form textarea.input-invalid {
+  border-color: #b91c1c;
+  box-shadow: 0 0 0 1px rgba(185, 28, 28, 0.15);
+}
+
+.checkout-form-error {
+  background: rgba(185, 28, 28, 0.08);
+  border: 1px solid rgba(185, 28, 28, 0.25);
+  color: #991b1b;
+  padding: 0.875rem 1rem;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+.checkout-form-error[hidden] { display: none; }
+
 .checkout-form input[type="text"],
 .checkout-form input[type="email"],
 .checkout-form input[type="tel"],
