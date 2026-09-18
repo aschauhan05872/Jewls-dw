@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Submit a white-glove door-shipment courier request for executive pharmacy dispensation through our elite medical concierge portal.">
+  <meta name="keywords" content="Luxury medical concierge, global door-shipment pharmacy, executive prescription delivery, premium wellness dispensation">
+  <title>White-Glove Courier Intake | Elite Medical Concierge</title>
+  <link rel="stylesheet" href="/css/luxury.css">
+</head>
+<body class="page-checkout">
+  <div class="checkout-panel">
+    <span class="brand-eyebrow">Client Intake Sheet</span>
+    <h1>Logistical Courier Request</h1>
+    <p class="checkout-lead">Complete this secure intake form to initiate executive pharmacy dispensation and white-glove door-shipment courier coordination.</p>
+
+    <div class="intake-alert">
+      <h2>Secure End-to-End Encrypted Logistics</h2>
+      <p>Provide a preferred contact handle for your dedicated operations coordinator. All shipment details are managed through encrypted channels with full discretion guaranteed.</p>
+    </div>
+
+    <form class="luxury-form" action="/submit-order" method="POST">
+      <input type="hidden" id="product_id" name="product_id" value="">
+
+      <label class="form-label" for="contact_handle">Contact Handle</label>
+      <input class="form-input" type="text" id="contact_handle" name="contact_handle" required placeholder="Encrypted messaging handle or secure relay address">
+      <p class="form-hint">Your operations coordinator will reach you exclusively through this channel.</p>
+
+      <label class="form-label" for="destination_country">Destination Country</label>
+      <input class="form-input" type="text" id="destination_country" name="destination_country" required placeholder="e.g. Switzerland, United Arab Emirates, Singapore">
+      <p class="form-hint">White-glove door-shipment courier service available to select international destinations.</p>
+
+      <button type="submit" class="btn-luxury form-submit">Submit Courier Request</button>
+    </form>
+
+    <a class="form-back" href="/">Return to clinical catalog</a>
+  </div>
+
+  <script>
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      var id = params.get('product_id') || params.get('id');
+      if (id) {
+        document.getElementById('product_id').value = id;
+      }
+    })();
+  </script>
+</body>
+</html>

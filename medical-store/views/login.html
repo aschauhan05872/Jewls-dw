@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Secure Administrative Entrance | Elite Medical Concierge</title>
+  <link rel="stylesheet" href="/css/luxury.css">
+</head>
+<body class="page-login">
+  <main class="login-box">
+    <span class="brand-eyebrow">Restricted Access</span>
+    <h1>Administrative Entrance</h1>
+    <p class="login-intro">Authorized personnel only. Enter credentials to access the executive distribution queue and inventory control room.</p>
+
+    <form class="luxury-form" action="/admin-login" method="POST">
+      <label class="form-label" for="username">Username</label>
+      <input class="form-input" type="text" id="username" name="username" required autocomplete="username">
+
+      <label class="form-label" for="password">Password</label>
+      <input class="form-input" type="password" id="password" name="password" required autocomplete="current-password">
+
+      <button type="submit" class="btn-luxury form-submit">Authenticate</button>
+    </form>
+
+    <a class="form-back" href="/">Return to clinical catalog</a>
+  </main>
+</body>
+</html>
