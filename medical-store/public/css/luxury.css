@@ -1,21 +1,33 @@
-/* Med Doorshipp — Voyage-inspired editorial design system */
+/* Med Doorshipp — Clinical medical design system */
 
-@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 
 *, *::before, *::after { box-sizing: border-box; }
 
 :root {
-  --forest-green: #102a24;
-  --forest-deep: #0a1f1a;
-  --warm-ivory: #f7f2e9;
-  --champagne-gold: #c6a66b;
-  --charcoal: #20201d;
-  --warm-taupe: #a99a87;
-  --line: rgba(16, 42, 36, 0.12);
-  --surface: rgba(247, 242, 233, 0.92);
-  --hero-overlay: rgba(16, 42, 36, 0.45);
-  --font-display: "Cormorant Garamond", Georgia, "Times New Roman", serif;
-  --font-body: system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  --med-primary: #0a6ebd;
+  --med-primary-deep: #064a87;
+  --med-teal: #0d9488;
+  --med-teal-light: #14b8a6;
+  --med-bg: #f0f7fc;
+  --med-white: #ffffff;
+  --med-text: #1e3a5f;
+  --med-muted: #64748b;
+  --med-line: rgba(10, 110, 189, 0.14);
+  --med-tint: rgba(10, 110, 189, 0.06);
+  --med-surface: rgba(255, 255, 255, 0.96);
+
+  --forest-green: var(--med-primary);
+  --forest-deep: var(--med-primary-deep);
+  --warm-ivory: var(--med-bg);
+  --champagne-gold: var(--med-teal);
+  --charcoal: var(--med-text);
+  --warm-taupe: var(--med-muted);
+  --line: var(--med-line);
+  --surface: var(--med-surface);
+  --hero-overlay: rgba(6, 74, 135, 0.55);
+  --font-display: "Inter", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
   --max: 1200px;
   --ease: 0.35s ease;
 }
@@ -53,7 +65,7 @@ a:focus-visible,
 input:focus-visible,
 textarea:focus-visible,
 select:focus-visible {
-  outline: 2px solid var(--champagne-gold);
+  outline: 2px solid var(--med-teal-light);
   outline-offset: 2px;
 }
 
@@ -90,9 +102,11 @@ select:focus-visible {
   min-height: 3rem;
   padding-inline: 1.75rem;
   background: var(--forest-green);
-  color: var(--warm-ivory);
+  color: var(--med-white);
   border: 1px solid var(--forest-green);
-  letter-spacing: 0.04em;
+  border-radius: 6px;
+  letter-spacing: 0.02em;
+  font-weight: 600;
   transition: background var(--ease), border-color var(--ease);
   cursor: pointer;
   font-size: 0.875rem;
@@ -101,7 +115,7 @@ select:focus-visible {
 .btn-primary:hover {
   background: var(--forest-deep);
   border-color: var(--forest-deep);
-  color: var(--warm-ivory);
+  color: var(--med-white);
 }
 
 .btn-secondary {
@@ -112,8 +126,10 @@ select:focus-visible {
   padding-inline: 1.75rem;
   background: transparent;
   color: var(--forest-green);
-  border: 1px solid rgba(16, 42, 36, 0.35);
-  letter-spacing: 0.04em;
+  border: 1px solid rgba(10, 110, 189, 0.35);
+  border-radius: 6px;
+  letter-spacing: 0.02em;
+  font-weight: 600;
   transition: background var(--ease), color var(--ease), border-color var(--ease);
   cursor: pointer;
   font-size: 0.875rem;
@@ -121,7 +137,7 @@ select:focus-visible {
 
 .btn-secondary:hover {
   background: var(--forest-green);
-  color: var(--warm-ivory);
+  color: var(--med-white);
   border-color: var(--forest-green);
 }
 
@@ -147,8 +163,9 @@ select:focus-visible {
 
 .brand-logo {
   font-family: var(--font-display);
-  font-size: 1.5rem;
-  letter-spacing: 0.18em;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
   color: var(--forest-green);
   text-decoration: none;
 }
@@ -165,7 +182,7 @@ select:focus-visible {
 }
 
 .nav-links a { color: var(--charcoal); }
-.nav-links a:hover { color: var(--champagne-gold); }
+.nav-links a:hover { color: var(--med-teal); }
 
 /* ---- Hero ---- */
 
@@ -180,7 +197,7 @@ select:focus-visible {
 .hero-section-bg {
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, var(--forest-deep) 0%, var(--forest-green) 50%, #1a3d34 100%);
+  background: linear-gradient(135deg, var(--forest-deep) 0%, var(--forest-green) 45%, #0d9488 100%);
   opacity: 0.95;
 }
 
@@ -204,14 +221,15 @@ select:focus-visible {
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.24em;
-  color: var(--champagne-gold);
+  color: var(--med-teal-light);
   margin: 0;
 }
 
 .hero-title {
   font-family: var(--font-display);
+  font-weight: 700;
   font-size: clamp(2.75rem, 8vw, 4.5rem);
-  line-height: 0.95;
+  line-height: 1.05;
   margin: 1rem 0 0;
   max-width: 16ch;
 }
@@ -221,7 +239,7 @@ select:focus-visible {
   max-width: 28rem;
   font-size: 1rem;
   line-height: 1.75;
-  color: var(--warm-taupe);
+  color: rgba(255, 255, 255, 0.82);
 }
 
 .hero-actions {
@@ -246,7 +264,7 @@ select:focus-visible {
 
 .trust-strip {
   border-block: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.4);
+  background: var(--med-white);
   padding: 1.5rem 0;
 }
 
@@ -337,7 +355,7 @@ select:focus-visible {
   position: relative;
   aspect-ratio: 4 / 5;
   overflow: hidden;
-  background: rgba(16, 42, 36, 0.04);
+  background: var(--med-tint);
 }
 
 .product-image {
@@ -355,14 +373,27 @@ select:focus-visible {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(16, 42, 36, 0.04);
+  background: var(--med-tint);
   color: var(--warm-taupe);
   font-size: 0.75rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
-.product-card-body { padding-top: 1.25rem; flex: 1; display: flex; flex-direction: column; }
+.product-card {
+  background: var(--med-white);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: box-shadow var(--ease), transform var(--ease);
+}
+
+.product-card:hover {
+  box-shadow: 0 8px 24px rgba(10, 110, 189, 0.1);
+  transform: translateY(-2px);
+}
+
+.product-card-body { padding: 1.25rem 1.25rem 1.5rem; flex: 1; display: flex; flex-direction: column; }
 
 .product-meta-line {
   font-size: 0.875rem;
@@ -378,7 +409,7 @@ select:focus-visible {
 }
 
 .product-title a { color: inherit; }
-.product-title a:hover { color: var(--champagne-gold); }
+.product-title a:hover { color: var(--med-teal); }
 
 .product-price {
   font-size: 0.875rem;
@@ -458,7 +489,8 @@ select:focus-visible {
 .product-detail-image {
   aspect-ratio: 4 / 5;
   overflow: hidden;
-  background: rgba(16, 42, 36, 0.04);
+  background: var(--med-tint);
+  border-radius: 8px;
 }
 
 .product-detail-image img {
@@ -488,7 +520,8 @@ select:focus-visible {
 .product-detail-meta {
   padding: 1rem 1.125rem;
   border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.4);
+  background: var(--med-white);
+  border-radius: 6px;
   margin-bottom: 1.5rem;
   font-size: 0.875rem;
   color: var(--warm-taupe);
@@ -509,7 +542,8 @@ select:focus-visible {
 .luxury-drawer {
   border: 1px solid var(--line);
   margin: 1.25rem 0;
-  background: rgba(255, 255, 255, 0.4);
+  background: var(--med-white);
+  border-radius: 6px;
 }
 
 .luxury-drawer-trigger {
@@ -531,11 +565,11 @@ select:focus-visible {
   right: 1rem;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--champagne-gold);
+  color: var(--med-teal);
   font-size: 1.1rem;
 }
 
-.luxury-drawer[open] .luxury-drawer-trigger::after { content: "\2212"; }
+.luxury-drawer[open] .luxury-drawer-trigger::after { content: "\2212"; color: var(--med-primary); }
 
 .luxury-drawer-panel {
   padding: 0 1rem 1rem;
@@ -572,7 +606,8 @@ select:focus-visible {
 
 .checkout-summary {
   border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.4);
+  background: var(--med-white);
+  border-radius: 8px;
   padding: 1.5rem;
   position: sticky;
   top: 5rem;
@@ -591,7 +626,7 @@ select:focus-visible {
   width: 100%;
   aspect-ratio: 4 / 5;
   object-fit: cover;
-  background: rgba(16, 42, 36, 0.04);
+  background: var(--med-tint);
 }
 
 .order-summary-image-placeholder {
@@ -600,7 +635,7 @@ select:focus-visible {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(16, 42, 36, 0.04);
+  background: var(--med-tint);
   color: var(--warm-taupe);
   font-size: 0.75rem;
   letter-spacing: 0.1em;
@@ -669,10 +704,10 @@ select:focus-visible {
 }
 
 .checkout-form input::placeholder,
-.checkout-form textarea::placeholder { color: rgba(169, 154, 135, 0.7); }
+.checkout-form textarea::placeholder { color: rgba(100, 116, 139, 0.7); }
 
 .checkout-form input[readonly] {
-  background: rgba(16, 42, 36, 0.03);
+  background: var(--med-tint);
 }
 
 .checkbox-label {
@@ -708,8 +743,8 @@ select:focus-visible {
 }
 
 .shipping-option:has(input:checked) {
-  border-color: rgba(16, 42, 36, 0.4);
-  background: rgba(16, 42, 36, 0.03);
+  border-color: rgba(10, 110, 189, 0.4);
+  background: var(--med-tint);
 }
 
 .shipping-option input { margin-top: 0.25rem; accent-color: var(--forest-green); }
@@ -746,7 +781,8 @@ select:focus-visible {
   width: 100%;
   max-width: 420px;
   border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.4);
+  background: var(--med-white);
+  border-radius: 8px;
   padding: 2.5rem 2rem;
 }
 
@@ -793,7 +829,8 @@ select:focus-visible {
 
 .admin-panel {
   border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.4);
+  background: var(--med-white);
+  border-radius: 8px;
   padding: 1.5rem;
 }
 
@@ -844,7 +881,7 @@ select:focus-visible {
 }
 
 .admin-table th {
-  background: rgba(16, 42, 36, 0.04);
+  background: var(--med-tint);
   color: var(--forest-green);
   font-size: 0.75rem;
   letter-spacing: 0.04em;
@@ -925,7 +962,7 @@ select:focus-visible {
 .success-highlight {
   border: 1px solid var(--line);
   padding: 1rem;
-  background: rgba(16, 42, 36, 0.03);
+  background: var(--med-tint);
   color: var(--charcoal);
 }
 

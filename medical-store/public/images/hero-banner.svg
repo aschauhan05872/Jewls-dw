@@ -1,21 +1,25 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 480" role="img" aria-label="Med Doorshipp">
   <defs>
     <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#0a1f1a"/>
-      <stop offset="50%" style="stop-color:#102a24"/>
-      <stop offset="100%" style="stop-color:#1a3d34"/>
+      <stop offset="0%" style="stop-color:#064A87"/>
+      <stop offset="50%" style="stop-color:#0A6EBD"/>
+      <stop offset="100%" style="stop-color:#0D9488"/>
     </linearGradient>
-    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" style="stop-color:#c6a66b;stop-opacity:0"/>
-      <stop offset="50%" style="stop-color:#c6a66b;stop-opacity:0.5"/>
-      <stop offset="100%" style="stop-color:#c6a66b;stop-opacity:0"/>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#14B8A6;stop-opacity:0"/>
+      <stop offset="50%" style="stop-color:#14B8A6;stop-opacity:0.45"/>
+      <stop offset="100%" style="stop-color:#14B8A6;stop-opacity:0"/>
     </linearGradient>
   </defs>
   <rect width="1200" height="480" fill="url(#bg)"/>
-  <rect x="0" y="420" width="1200" height="2" fill="url(#gold)"/>
-  <circle cx="980" cy="120" r="180" fill="#c6a66b" opacity="0.08"/>
-  <circle cx="200" cy="360" r="120" fill="#f7f2e9" opacity="0.04"/>
-  <text x="600" y="200" text-anchor="middle" fill="#f7f2e9" font-family="Georgia, serif" font-size="42" letter-spacing="4">MED DOORSHIPP</text>
-  <text x="600" y="250" text-anchor="middle" fill="#c6a66b" font-family="Helvetica, Arial, sans-serif" font-size="16" letter-spacing="6">PREMIUM MEDICAL CONCIERGE</text>
-  <text x="600" y="310" text-anchor="middle" fill="#a99a87" font-family="Helvetica, Arial, sans-serif" font-size="14">White-Glove Door-Shipment · Executive Pharmacy Dispensation</text>
+  <rect x="0" y="420" width="1200" height="2" fill="url(#accent)"/>
+  <circle cx="980" cy="120" r="180" fill="#14B8A6" opacity="0.1"/>
+  <circle cx="200" cy="360" r="120" fill="#FFFFFF" opacity="0.06"/>
+  <g transform="translate(1050,80)" opacity="0.15">
+    <rect x="-20" y="-60" width="40" height="120" rx="4" fill="#FFFFFF"/>
+    <rect x="-60" y="-20" width="120" height="40" rx="4" fill="#FFFFFF"/>
+  </g>
+  <text x="600" y="200" text-anchor="middle" fill="#FFFFFF" font-family="Inter, Helvetica, Arial, sans-serif" font-size="42" font-weight="700" letter-spacing="3">MED DOORSHIPP</text>
+  <text x="600" y="250" text-anchor="middle" fill="#14B8A6" font-family="Inter, Helvetica, Arial, sans-serif" font-size="16" font-weight="600" letter-spacing="5">PREMIUM MEDICAL CONCIERGE</text>
+  <text x="600" y="310" text-anchor="middle" fill="rgba(255,255,255,0.75)" font-family="Inter, Helvetica, Arial, sans-serif" font-size="14">Executive Pharmacy · White-Glove Door Delivery</text>
 </svg>
