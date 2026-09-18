@@ -33,7 +33,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
-  secret: 'medical-store-executive-session',
+  secret: 'voyage-medical-session-secret',
   resave: false,
   saveUninitialized: false,
   cookie: { secure: false }
@@ -89,6 +89,21 @@ function formatPriceUsd(price) {
   return '$' + num.toFixed(2) + ' USD';
 }
 
+function truncateText(text, maxLen) {
+  var safe = String(text || '');
+  if (safe.length <= maxLen) {
+    return escapeHtml(safe);
+  }
+  return escapeHtml(safe.substring(0, maxLen).trim()) + '&hellip;';
+}
+
+function buildProductImage(p, cssClass) {
+  if (p.image) {
+    return '<img src="/uploads/' + escapeHtml(p.image) + '" alt="' + escapeHtml(p.title) + '" class="' + cssClass + '">';
+  }
+  return '<div class="product-image-placeholder" aria-label="' + escapeHtml(p.title) + '">Clinical Asset Preview</div>';
+}
+
 function buildPrecautionsDrawer(productId, precautionsText) {
   var safeText = escapeHtml(precautionsText || 'Consult your attending physician prior to dispensation.');
   var lines = safeText.split('\n').filter(function (line) {
@@ -106,15 +121,31 @@ function buildPrecautionsDrawer(productId, precautionsText) {
 
   return (
     '<details class="luxury-drawer" id="precautions-' + productId + '">' +
-      '<summary class="luxury-drawer-trigger">' +
-        'Medical Precautions &amp; Clinical Contraindications' +
-      '</summary>' +
+      '<summary class="luxury-drawer-trigger">Medical Precautions &amp; Clinical Contraindications</summary>' +
       '<div class="luxury-drawer-panel">' +
         '<h4 class="drawer-title">Clinical Safety Advisory</h4>' +
         bodyContent +
         '<p class="drawer-note">Review all storage precautions before requesting white-glove door-shipment courier service.</p>' +
       '</div>' +
     '</details>'
+  );
+}
+
+function buildCatalogCard(p) {
+  return (
+    '<article class="product-card">' +
+      '<a href="/product/' + p.id + '">' + buildProductImage(p, 'product-image') + '</a>' +
+      '<div class="product-card-body">' +
+        '<h2 class="product-title"><a href="/product/' + p.id + '">' + escapeHtml(p.title) + '</a></h2>' +
+        '<p class="product-price">' + formatPriceUsd(p.price_usd) + '</p>' +
+        '<p class="product-description">' + truncateText(p.description, 140) + '</p>' +
+        '<p class="product-meta">Dosage Strength: ' + escapeHtml(p.dosage_strength) + '</p>' +
+        '<div class="product-actions">' +
+          '<a href="/product/' + p.id + '" class="detail-button">View Details</a>' +
+          '<a href="/checkout?product_id=' + p.id + '" class="buy-button">Request Courier</a>' +
+        '</div>' +
+      '</div>' +
+    '</article>'
   );
 }
 
@@ -127,32 +158,43 @@ app.get('/', function (req, res) {
     var productHtml = '';
 
     if (!products || products.length === 0) {
-      productHtml =
-        '<p class="catalog-status">Our executive pharmacy catalog is being curated. ' +
-        'Return shortly for premium wellness dispensation listings.</p>';
+      productHtml = '<p class="no-products">Our executive pharmacy catalog is being curated. Please check back soon.</p>';
     } else {
       products.forEach(function (p) {
-        var imageBlock = p.image
-          ? '<img src="/uploads/' + escapeHtml(p.image) + '" alt="' + escapeHtml(p.title) + '" class="luxury-card-image">'
-          : '<div class="luxury-card-image-placeholder" aria-label="' + escapeHtml(p.title) + '">Clinical Asset</div>';
-
-        productHtml +=
-          '<article class="luxury-card">' +
-            '<div class="luxury-card-media">' + imageBlock + '</div>' +
-            '<div class="luxury-card-content">' +
-              '<span class="dosage-badge">' + escapeHtml(p.dosage_strength) + '</span>' +
-              '<h2 class="luxury-card-title">' + escapeHtml(p.title) + '</h2>' +
-              '<p class="luxury-card-price">' + formatPriceUsd(p.price_usd) + '</p>' +
-              '<p class="luxury-card-description">' + escapeHtml(p.description) + '</p>' +
-              buildPrecautionsDrawer(p.id, p.precautions) +
-              '<a href="/checkout?product_id=' + p.id + '" class="btn-luxury">Request White-Glove Courier</a>' +
-            '</div>' +
-          '</article>';
+        productHtml += buildCatalogCard(p);
       });
     }
 
     var html = readView('index.html');
     html = html.replace('<!-- PRODUCTS_PLACEHOLDER -->', productHtml);
+    res.type('html').send(html);
+  });
+});
+
+app.get('/product/:id', function (req, res) {
+  var productId = req.params.id;
+
+  db.get('SELECT * FROM products WHERE id = ?', [productId], function (err, p) {
+    if (err) {
+      return res.status(500).send('Database error');
+    }
+    if (!p) {
+      return res.status(404).send(
+        '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Not Found</title>' +
+        '<link rel="stylesheet" href="/css/luxury.css"></head>' +
+        '<body class="page-centered"><main class="success-card">' +
+        '<h1>Clinical Asset Not Found</h1><p><a href="/">Return to catalog</a></p></main></body></html>'
+      );
+    }
+
+    var html = readView('product.html');
+    html = html.replace(/<!-- PRODUCT_TITLE -->/g, escapeHtml(p.title));
+    html = html.replace('<!-- PRODUCT_PRICE -->', formatPriceUsd(p.price_usd));
+    html = html.replace('<!-- PRODUCT_DOSAGE -->', escapeHtml(p.dosage_strength));
+    html = html.replace('<!-- PRODUCT_DESCRIPTION -->', escapeHtml(p.description));
+    html = html.replace('<!-- PRODUCT_IMAGE -->', buildProductImage(p, 'product-image'));
+    html = html.replace('<!-- PRODUCT_ID -->', String(p.id));
+    html = html.replace('<!-- PRECAUTIONS_BLOCK -->', buildPrecautionsDrawer(p.id, p.precautions));
     res.type('html').send(html);
   });
 });
@@ -174,10 +216,10 @@ app.post('/submit-order', function (req, res) {
         return res.status(500).send(
           '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Request Error</title>' +
           '<link rel="stylesheet" href="/css/luxury.css"></head>' +
-          '<body class="page-centered"><main class="success-card error-card">' +
+          '<body class="page-centered"><main class="success-card">' +
           '<h1>Courier Request Unsuccessful</h1>' +
-          '<p>We were unable to record your intake. Please verify your details and try again.</p>' +
-          '<a href="/" class="btn-luxury">Return to Catalog</a></main></body></html>'
+          '<p>We could not record your intake. Please try again.</p>' +
+          '<a href="/" class="buy-button">Return to Catalog</a></main></body></html>'
         );
       }
 
@@ -185,11 +227,10 @@ app.post('/submit-order', function (req, res) {
         '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Request Confirmed</title>' +
         '<link rel="stylesheet" href="/css/luxury.css"></head>' +
         '<body class="page-centered"><main class="success-card">' +
-        '<span class="brand-eyebrow">Request Confirmed</span>' +
         '<h1>White-Glove Courier Intake Received</h1>' +
-        '<p>Your executive pharmacy dispensation inquiry has been securely logged within our distribution ledger.</p>' +
+        '<p>Your executive pharmacy dispensation inquiry has been securely logged.</p>' +
         '<p class="success-highlight">A dedicated operations coordinator will contact you through your provided handle within <strong>24 hours</strong> to finalize secure end-to-end encrypted logistics.</p>' +
-        '<a href="/" class="btn-luxury">Return to Clinical Catalog</a></main></body></html>'
+        '<a href="/" class="buy-button">Return to Clinical Catalog</a></main></body></html>'
       );
     }
   );
@@ -214,9 +255,9 @@ app.post('/admin-login', function (req, res) {
   res.status(401).send(
     '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Access Denied</title>' +
     '<link rel="stylesheet" href="/css/luxury.css"></head>' +
-    '<body class="page-centered"><main class="success-card error-card">' +
-    '<h1>Access Denied</h1><p>Invalid administrative credentials.</p>' +
-    '<a href="/admin-login" class="btn-luxury">Return to Entrance</a></main></body></html>'
+    '<body class="page-centered"><main class="success-card">' +
+    '<h1>Access Denied</h1><p>Invalid credentials.</p>' +
+    '<a href="/admin-login">Return to entrance</a></main></body></html>'
   );
 });
 
@@ -228,8 +269,7 @@ app.get('/admin-dashboard', function (req, res) {
   var query =
     'SELECT leads.id, leads.timestamp, leads.contact_handle, leads.destination_country, ' +
     'leads.selected_product_id, products.title AS product_title, products.price_usd AS product_price ' +
-    'FROM leads ' +
-    'LEFT JOIN products ON leads.selected_product_id = products.id ' +
+    'FROM leads LEFT JOIN products ON leads.selected_product_id = products.id ' +
     'ORDER BY leads.id DESC';
 
   db.all(query, [], function (err, leads) {
@@ -240,16 +280,9 @@ app.get('/admin-dashboard', function (req, res) {
     var leadsHtml = '';
 
     if (!leads || leads.length === 0) {
-      leadsHtml = '<tr><td colspan="7">No active shipping requests in the distribution queue.</td></tr>';
+      leadsHtml = '<tr><td colspan="7">No active shipping requests recorded.</td></tr>';
     } else {
       leads.forEach(function (lead) {
-        var productLabel = lead.product_title
-          ? escapeHtml(lead.product_title)
-          : 'Unassigned';
-        var priceLabel = lead.product_price
-          ? formatPriceUsd(lead.product_price)
-          : '—';
-
         leadsHtml +=
           '<tr>' +
             '<td>' + lead.id + '</td>' +
@@ -257,8 +290,8 @@ app.get('/admin-dashboard', function (req, res) {
             '<td>' + escapeHtml(lead.contact_handle) + '</td>' +
             '<td>' + escapeHtml(lead.destination_country) + '</td>' +
             '<td>' + escapeHtml(lead.selected_product_id) + '</td>' +
-            '<td>' + productLabel + '</td>' +
-            '<td>' + priceLabel + '</td>' +
+            '<td>' + (lead.product_title ? escapeHtml(lead.product_title) : '—') + '</td>' +
+            '<td>' + (lead.product_price ? formatPriceUsd(lead.product_price) : '—') + '</td>' +
           '</tr>';
       });
     }
@@ -274,16 +307,16 @@ app.post('/admin/add-product', upload.single('image'), function (req, res) {
     return res.redirect('/admin-login');
   }
 
-  var title = req.body.title;
-  var price_usd = req.body.price_usd;
-  var description = req.body.description;
-  var dosage_strength = req.body.dosage_strength;
-  var precautions = req.body.precautions;
-  var image = req.file ? req.file.filename : null;
-
   db.run(
     'INSERT INTO products (title, price_usd, description, dosage_strength, precautions, image) VALUES (?, ?, ?, ?, ?, ?)',
-    [title, price_usd, description, dosage_strength, precautions, image],
+    [
+      req.body.title,
+      req.body.price_usd,
+      req.body.description,
+      req.body.dosage_strength,
+      req.body.precautions,
+      req.file ? req.file.filename : null
+    ],
     function (err) {
       if (err) {
         return res.status(500).send('Failed to add clinical product');
@@ -294,5 +327,5 @@ app.post('/admin/add-product', upload.single('image'), function (req, res) {
 });
 
 app.listen(PORT, HOST, function () {
-  console.log('Medical store portal listening on http://' + HOST + ':' + PORT);
+  console.log('Voyage Medical store listening on http://' + HOST + ':' + PORT);
 });
