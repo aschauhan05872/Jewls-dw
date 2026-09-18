@@ -45,10 +45,11 @@
               </div>
             </section>
 
-            <section class="form-section" aria-labelledby="billing-heading">
+            <section class="form-section billing-section" aria-labelledby="billing-heading">
               <h2 id="billing-heading" class="form-section-title">Billing Address</h2>
-              <label class="checkbox-label"><input type="checkbox" id="billing_same_as_shipping" name="billing_same_as_shipping" checked><span>Billing address same as shipping</span></label>
-              <div id="billing-fields" class="billing-fields hidden">
+              <input type="checkbox" id="billing_same_as_shipping" name="billing_same_as_shipping" class="billing-same-toggle" checked>
+              <label class="checkbox-label" for="billing_same_as_shipping"><span>Billing address same as shipping</span></label>
+              <div id="billing-fields" class="billing-fields">
                 <div class="form-grid form-grid-2" style="margin-top:1.5rem;">
                   <div><label for="billing_first_name" class="form-label">First name</label><input type="text" id="billing_first_name" name="billing_first_name"></div>
                   <div><label for="billing_last_name" class="form-label">Last name</label><input type="text" id="billing_last_name" name="billing_last_name"></div>
@@ -86,21 +87,5 @@
   </main>
 
   <!-- FOOTER -->
-
-  <script>
-    (function () {
-      var sameCheckbox = document.getElementById('billing_same_as_shipping');
-      var billingFields = document.getElementById('billing-fields');
-      var shippingMap = { first_name: 'billing_first_name', last_name: 'billing_last_name', shipping_street: 'billing_street', shipping_line2: 'billing_line2', shipping_city: 'billing_city', shipping_state: 'billing_state', shipping_postal: 'billing_postal' };
-      function copyShippingToBilling() { Object.keys(shippingMap).forEach(function (src) { var s = document.getElementById(src), d = document.getElementById(shippingMap[src]); if (s && d) d.value = s.value; }); }
-      function toggleBillingSection() {
-        if (sameCheckbox.checked) { billingFields.classList.add('hidden'); copyShippingToBilling(); }
-        else billingFields.classList.remove('hidden');
-      }
-      sameCheckbox.addEventListener('change', toggleBillingSection);
-      Object.keys(shippingMap).forEach(function (id) { var el = document.getElementById(id); if (el) el.addEventListener('input', function () { if (sameCheckbox.checked) copyShippingToBilling(); }); });
-      toggleBillingSection();
-    })();
-  </script>
 </body>
 </html>

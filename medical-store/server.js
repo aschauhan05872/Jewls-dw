@@ -10,7 +10,11 @@ const seedMedicines = require('./lib/seed-medicines');
 
 const app = express();
 const PORT = 8080;
+/** Tor hidden-service safety: never bind to 0.0.0.0 — loopback only via reverse proxy. */
 const HOST = '127.0.0.1';
+if (HOST !== '127.0.0.1') {
+  throw new Error('Server must bind to 127.0.0.1 to prevent IP leakage');
+}
 
 const ADMIN_USERNAME = 'admin';
 const ADMIN_PASSWORD = 'SecureTorPass123!';
@@ -174,11 +178,19 @@ function productImageSrc(p) {
   return '/uploads/' + p.image;
 }
 
+function buildMedicalImageAlt(p) {
+  var title = p.title || 'Clinical Asset';
+  var dosage = p.dosage_strength || 'verified dosage';
+  var price = formatPriceUsd(p.price_usd);
+  return 'Med Doorshipp - ' + title + ' - ' + dosage + ' - Executive Prescription Delivery ' + price;
+}
+
 function buildProductImage(p, cssClass, wrapped) {
+  var alt = escapeHtml(buildMedicalImageAlt(p));
   var src = productImageSrc(p);
   var inner = src
-    ? '<img src="' + escapeHtml(src) + '" alt="' + escapeHtml(p.title) + '" class="' + cssClass + '">'
-    : '<div class="product-image-placeholder" aria-label="' + escapeHtml(p.title) + '">Medicine Preview</div>';
+    ? '<img src="' + escapeHtml(src) + '" alt="' + alt + '" class="' + cssClass + '">'
+    : '<div class="product-image-placeholder" aria-label="' + alt + '">Medicine Preview</div>';
   return wrapped ? '<div class="product-image-wrap">' + inner + '</div>' : inner;
 }
 
@@ -201,7 +213,7 @@ function buildCatalogCard(p) {
     '<article class="product-card">' +
       '<a href="/product/' + p.id + '">' + buildProductImage(p, 'product-image', true) + '</a>' +
       '<div class="product-card-body">' +
-        '<p class="product-meta-line">' + escapeHtml(p.category || 'medicine') + ' · ' + escapeHtml(p.dosage_strength) + '</p>' +
+        '<p class="product-meta-line">' + escapeHtml(p.category || 'medicine') + ' · Dosage Potency: ' + escapeHtml(p.dosage_strength) + '</p>' +
         '<h2 class="product-title"><a href="/product/' + p.id + '">' + escapeHtml(p.title) + '</a></h2>' +
         '<p class="product-price">' + formatPriceUsd(p.price_usd) + '</p>' +
         '<p class="product-description">' + truncateText(p.description, 100) + '</p>' +
@@ -232,8 +244,8 @@ function buildOrderSummaryItems(products) {
     subtotal += parseFloat(p.price_usd) * p.cartQty;
     var src = productImageSrc(p);
     var img = src
-      ? '<img src="' + escapeHtml(src) + '" alt="" class="cart-line-image">'
-      : '<div class="cart-line-image cart-line-placeholder"></div>';
+      ? '<img src="' + escapeHtml(src) + '" alt="' + escapeHtml(buildMedicalImageAlt(p)) + '" class="cart-line-image">'
+      : '<div class="cart-line-image cart-line-placeholder" aria-label="' + escapeHtml(buildMedicalImageAlt(p)) + '"></div>';
     html +=
       '<div class="cart-line-item">' + img +
         '<div class="cart-line-details">' +
@@ -375,7 +387,7 @@ app.get('/cart', function (req, res) {
         var src = productImageSrc(p);
         content +=
           '<article class="cart-page-item">' +
-            (src ? '<img src="' + escapeHtml(src) + '" alt="" class="cart-line-image">' : '<div class="cart-line-image cart-line-placeholder"></div>') +
+            (src ? '<img src="' + escapeHtml(src) + '" alt="' + escapeHtml(buildMedicalImageAlt(p)) + '" class="cart-line-image">' : '<div class="cart-line-image cart-line-placeholder" aria-label="' + escapeHtml(buildMedicalImageAlt(p)) + '"></div>') +
             '<div class="cart-line-details">' +
               '<h2>' + escapeHtml(p.title) + '</h2>' +
               '<p class="order-summary-meta">' + escapeHtml(p.dosage_strength) + '</p>' +
@@ -550,5 +562,5 @@ app.post('/admin/add-product', upload.single('image'), function (req, res) {
 });
 
 app.listen(PORT, HOST, function () {
-  console.log('Med Doorshipp portal listening on http://' + HOST + ':' + PORT);
+  console.log('Med Doorshipp portal listening on http://' + HOST + ':' + PORT + ' (loopback only — Tor-safe)');
 });

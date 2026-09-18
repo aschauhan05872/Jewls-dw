@@ -1,6 +1,4 @@
-/* Med Doorshipp — Clinical medical design system */
-
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+/* Med Doorshipp — Clinical medical design system (zero external network deps) */
 
 *, *::before, *::after { box-sizing: border-box; }
 
@@ -30,8 +28,8 @@
   --line: var(--med-line);
   --surface: var(--med-surface);
   --hero-overlay: rgba(6, 74, 135, 0.55);
-  --font-display: "Inter", system-ui, sans-serif;
-  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  --font-display: "Playfair Display", Georgia, "Times New Roman", serif;
+  --font-body: Georgia, "Times New Roman", "Helvetica Neue", Helvetica, Arial, sans-serif;
   --max: 1200px;
   --ease: 0.35s ease;
 }
@@ -784,7 +782,21 @@ select:focus-visible {
   accent-color: var(--forest-green);
 }
 
-.billing-fields.hidden { display: none; }
+/* Pure CSS billing toggle — no JavaScript required (Tor Safest mode) */
+.billing-section .billing-same-toggle {
+  accent-color: var(--med-pharmacy-green);
+  margin-right: 0.5rem;
+  vertical-align: middle;
+}
+
+.billing-section .checkbox-label {
+  display: inline;
+  margin: 0 0 0.5rem;
+}
+
+.billing-same-toggle:checked ~ .billing-fields { display: none; }
+
+.billing-fields { margin-top: 1.5rem; }
 
 .shipping-methods { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1.5rem; }
 
