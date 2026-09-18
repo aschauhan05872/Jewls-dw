@@ -181,7 +181,7 @@ function buildCatalogCard(p) {
         '<p class="product-meta">Dosage Strength: ' + escapeHtml(p.dosage_strength) + '</p>' +
         '<div class="product-actions">' +
           '<a href="/product/' + p.id + '" class="detail-button">View Details</a>' +
-          '<a href="/checkout?product_id=' + p.id + '" class="buy-button">Request Courier</a>' +
+          '<a href="/checkout?product_id=' + p.id + '" class="buy-button">Proceed to Checkout</a>' +
         '</div>' +
       '</div>' +
     '</article>'

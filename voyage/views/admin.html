@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | Voyage Jewelry</title>
+  <link rel="stylesheet" href="/css/luxury.css">
+</head>
+<body>
+  <header class="admin-header"><div class="admin-header-inner">
+    <h1>Voyage Admin Dashboard</h1>
+    <p><a href="/">View storefront</a></p>
+  </div></header>
+  <main class="admin-main">
+    <div class="admin-split">
+      <section class="admin-panel">
+        <h2>Add Jewelry Piece</h2>
+        <p>Upload a new item to the Voyage collection.</p>
+        <form action="/admin/add-product" method="POST" enctype="multipart/form-data">
+          <label for="title">Title</label>
+          <input type="text" id="title" name="title" required placeholder="e.g. Celtic Knot Signet Ring">
+          <label for="price_usd">Price (USD)</label>
+          <input type="number" id="price_usd" name="price_usd" step="0.01" min="0" required placeholder="275.00">
+          <label for="weight">Weight</label>
+          <input type="text" id="weight" name="weight" required placeholder="e.g. 14g">
+          <label for="size">Size</label>
+          <input type="text" id="size" name="size" required placeholder="e.g. US 9">
+          <label for="description">Description</label>
+          <textarea id="description" name="description" required></textarea>
+          <label for="care_instructions">Care &amp; Handling Instructions</label>
+          <textarea id="care_instructions" name="care_instructions" required placeholder="One instruction per line"></textarea>
+          <label for="image">Product Image</label>
+          <input type="file" id="image" name="image" accept="image/*">
+          <button type="submit">Add to Collection</button>
+        </form>
+      </section>
+      <section class="admin-panel">
+        <h2>Customer Orders</h2>
+        <p>All checkout submissions with shipping details.</p>
+        <table class="admin-table">
+          <thead><tr>
+            <th>ID</th><th>Timestamp</th><th>Customer</th><th>Email</th><th>Phone</th>
+            <th>Ship To</th><th>Product</th><th>Price</th><th>Product ID</th>
+          </tr></thead>
+          <tbody><!-- LEADS_PLACEHOLDER --></tbody>
+        </table>
+      </section>
+    </div>
+  </main>
+</body>
+</html>
