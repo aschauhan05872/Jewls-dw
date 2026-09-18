@@ -33,13 +33,36 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
-  secret: 'voyage-medical-session-secret',
+  secret: 'med-doorshipp-session-secret',
   resave: false,
   saveUninitialized: false,
   cookie: { secure: false }
 }));
 
 const db = new sqlite3.Database(path.join(__dirname, 'database.db'));
+
+function migrateLeadsColumns() {
+  var columns = [
+    'first_name TEXT',
+    'last_name TEXT',
+    'email TEXT',
+    'contact_number TEXT',
+    'shipping_street TEXT',
+    'shipping_city TEXT',
+    'shipping_state TEXT',
+    'shipping_postal TEXT',
+    'shipping_country TEXT',
+    'billing_street TEXT',
+    'billing_city TEXT',
+    'billing_state TEXT',
+    'billing_postal TEXT',
+    'billing_country TEXT'
+  ];
+
+  columns.forEach(function (col) {
+    db.run('ALTER TABLE leads ADD COLUMN ' + col, function () {});
+  });
+}
 
 db.serialize(function () {
   db.run(
@@ -58,11 +81,27 @@ db.serialize(function () {
     'CREATE TABLE IF NOT EXISTS leads (' +
       'id INTEGER PRIMARY KEY AUTOINCREMENT, ' +
       'timestamp DATETIME DEFAULT CURRENT_TIMESTAMP, ' +
-      'contact_handle TEXT NOT NULL, ' +
+      'contact_handle TEXT, ' +
       'destination_country TEXT, ' +
-      'selected_product_id INTEGER' +
+      'selected_product_id INTEGER, ' +
+      'first_name TEXT, ' +
+      'last_name TEXT, ' +
+      'email TEXT, ' +
+      'contact_number TEXT, ' +
+      'shipping_street TEXT, ' +
+      'shipping_city TEXT, ' +
+      'shipping_state TEXT, ' +
+      'shipping_postal TEXT, ' +
+      'shipping_country TEXT, ' +
+      'billing_street TEXT, ' +
+      'billing_city TEXT, ' +
+      'billing_state TEXT, ' +
+      'billing_postal TEXT, ' +
+      'billing_country TEXT' +
     ')'
   );
+
+  migrateLeadsColumns();
 });
 
 function readView(filename) {
@@ -149,6 +188,27 @@ function buildCatalogCard(p) {
   );
 }
 
+function buildOrderSummary(p) {
+  if (!p) {
+    return '<p class="order-summary-empty">No product selected. <a href="/">Browse catalog</a></p>';
+  }
+
+  var imageBlock = p.image
+    ? '<img src="/uploads/' + escapeHtml(p.image) + '" alt="' + escapeHtml(p.title) + '" class="order-summary-image">'
+    : '<div class="order-summary-image-placeholder">Clinical Asset</div>';
+
+  return (
+    '<div class="order-summary-card">' +
+      imageBlock +
+      '<div class="order-summary-details">' +
+        '<h3>' + escapeHtml(p.title) + '</h3>' +
+        '<p class="order-summary-price">' + formatPriceUsd(p.price_usd) + '</p>' +
+        '<p class="order-summary-meta">Dosage: ' + escapeHtml(p.dosage_strength) + '</p>' +
+      '</div>' +
+    '</div>'
+  );
+}
+
 app.get('/', function (req, res) {
   db.all('SELECT * FROM products ORDER BY id DESC', [], function (err, products) {
     if (err) {
@@ -200,26 +260,75 @@ app.get('/product/:id', function (req, res) {
 });
 
 app.get('/checkout', function (req, res) {
-  res.sendFile(path.join(__dirname, 'views', 'checkout.html'));
+  var productId = req.query.product_id || req.query.id;
+
+  function renderCheckout(product) {
+    var html = readView('checkout.html');
+    html = html.replace('<!-- ORDER_SUMMARY -->', buildOrderSummary(product));
+    html = html.replace('<!-- PRODUCT_ID -->', product ? String(product.id) : '');
+    res.type('html').send(html);
+  }
+
+  if (!productId) {
+    return renderCheckout(null);
+  }
+
+  db.get('SELECT * FROM products WHERE id = ?', [productId], function (err, product) {
+    if (err) {
+      return res.status(500).send('Database error');
+    }
+    renderCheckout(product || null);
+  });
 });
 
 app.post('/submit-order', function (req, res) {
-  var contact_handle = req.body.contact_handle;
-  var destination_country = req.body.destination_country;
-  var product_id = req.body.product_id;
+  var body = req.body;
+  var product_id = body.product_id;
+  var first_name = body.first_name;
+  var last_name = body.last_name;
+  var email = body.email;
+  var contact_number = body.contact_number;
+  var shipping_street = body.shipping_street;
+  var shipping_city = body.shipping_city;
+  var shipping_state = body.shipping_state;
+  var shipping_postal = body.shipping_postal;
+  var shipping_country = body.shipping_country;
+  var billing_street = body.billing_street;
+  var billing_city = body.billing_city;
+  var billing_state = body.billing_state;
+  var billing_postal = body.billing_postal;
+  var billing_country = body.billing_country;
+
+  if (body.billing_same_as_shipping === 'on') {
+    billing_street = shipping_street;
+    billing_city = shipping_city;
+    billing_state = shipping_state;
+    billing_postal = shipping_postal;
+    billing_country = shipping_country;
+  }
 
   db.run(
-    'INSERT INTO leads (contact_handle, destination_country, selected_product_id) VALUES (?, ?, ?)',
-    [contact_handle, destination_country, product_id],
+    'INSERT INTO leads (' +
+      'selected_product_id, first_name, last_name, email, contact_number, ' +
+      'shipping_street, shipping_city, shipping_state, shipping_postal, shipping_country, ' +
+      'billing_street, billing_city, billing_state, billing_postal, billing_country, ' +
+      'contact_handle, destination_country' +
+    ') VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+    [
+      product_id, first_name, last_name, email, contact_number,
+      shipping_street, shipping_city, shipping_state, shipping_postal, shipping_country,
+      billing_street, billing_city, billing_state, billing_postal, billing_country,
+      email, shipping_country
+    ],
     function (err) {
       if (err) {
         return res.status(500).send(
           '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Request Error</title>' +
           '<link rel="stylesheet" href="/css/luxury.css"></head>' +
-          '<body class="page-centered"><main class="success-card">' +
+          '<body class="page-centered"><main class="success-card error-card">' +
           '<h1>Courier Request Unsuccessful</h1>' +
-          '<p>We could not record your intake. Please try again.</p>' +
-          '<a href="/" class="buy-button">Return to Catalog</a></main></body></html>'
+          '<p>We could not record your intake. Please verify all fields and try again.</p>' +
+          '<a href="/checkout" class="buy-button">Return to Checkout</a></main></body></html>'
         );
       }
 
@@ -228,8 +337,8 @@ app.post('/submit-order', function (req, res) {
         '<link rel="stylesheet" href="/css/luxury.css"></head>' +
         '<body class="page-centered"><main class="success-card">' +
         '<h1>White-Glove Courier Intake Received</h1>' +
-        '<p>Your executive pharmacy dispensation inquiry has been securely logged.</p>' +
-        '<p class="success-highlight">A dedicated operations coordinator will contact you through your provided handle within <strong>24 hours</strong> to finalize secure end-to-end encrypted logistics.</p>' +
+        '<p>Thank you, <strong>' + escapeHtml(first_name) + ' ' + escapeHtml(last_name) + '</strong>. Your executive pharmacy dispensation order has been securely logged.</p>' +
+        '<p class="success-highlight">A dedicated operations coordinator will contact you at <strong>' + escapeHtml(email) + '</strong> within <strong>24 hours</strong> to finalize secure end-to-end encrypted logistics to your shipping address.</p>' +
         '<a href="/" class="buy-button">Return to Clinical Catalog</a></main></body></html>'
       );
     }
@@ -255,7 +364,7 @@ app.post('/admin-login', function (req, res) {
   res.status(401).send(
     '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Access Denied</title>' +
     '<link rel="stylesheet" href="/css/luxury.css"></head>' +
-    '<body class="page-centered"><main class="success-card">' +
+    '<body class="page-centered"><main class="success-card error-card">' +
     '<h1>Access Denied</h1><p>Invalid credentials.</p>' +
     '<a href="/admin-login">Return to entrance</a></main></body></html>'
   );
@@ -267,8 +376,9 @@ app.get('/admin-dashboard', function (req, res) {
   }
 
   var query =
-    'SELECT leads.id, leads.timestamp, leads.contact_handle, leads.destination_country, ' +
-    'leads.selected_product_id, products.title AS product_title, products.price_usd AS product_price ' +
+    'SELECT leads.id, leads.timestamp, leads.first_name, leads.last_name, leads.email, leads.contact_number, ' +
+    'leads.shipping_city, leads.shipping_country, leads.selected_product_id, ' +
+    'products.title AS product_title, products.price_usd AS product_price ' +
     'FROM leads LEFT JOIN products ON leads.selected_product_id = products.id ' +
     'ORDER BY leads.id DESC';
 
@@ -280,18 +390,28 @@ app.get('/admin-dashboard', function (req, res) {
     var leadsHtml = '';
 
     if (!leads || leads.length === 0) {
-      leadsHtml = '<tr><td colspan="7">No active shipping requests recorded.</td></tr>';
+      leadsHtml = '<tr><td colspan="9">No active shipping requests recorded.</td></tr>';
     } else {
       leads.forEach(function (lead) {
+        var customerName = ((lead.first_name || '') + ' ' + (lead.last_name || '')).trim();
+        if (!customerName && lead.email) {
+          customerName = lead.email;
+        }
+        if (!customerName) {
+          customerName = lead.contact_handle || '—';
+        }
+
         leadsHtml +=
           '<tr>' +
             '<td>' + lead.id + '</td>' +
             '<td>' + escapeHtml(lead.timestamp) + '</td>' +
-            '<td>' + escapeHtml(lead.contact_handle) + '</td>' +
-            '<td>' + escapeHtml(lead.destination_country) + '</td>' +
-            '<td>' + escapeHtml(lead.selected_product_id) + '</td>' +
+            '<td>' + escapeHtml(customerName) + '</td>' +
+            '<td>' + escapeHtml(lead.email || lead.contact_handle) + '</td>' +
+            '<td>' + escapeHtml(lead.contact_number) + '</td>' +
+            '<td>' + escapeHtml(lead.shipping_city) + ', ' + escapeHtml(lead.shipping_country || lead.destination_country) + '</td>' +
             '<td>' + (lead.product_title ? escapeHtml(lead.product_title) : '—') + '</td>' +
             '<td>' + (lead.product_price ? formatPriceUsd(lead.product_price) : '—') + '</td>' +
+            '<td>' + escapeHtml(lead.selected_product_id) + '</td>' +
           '</tr>';
       });
     }
@@ -327,5 +447,5 @@ app.post('/admin/add-product', upload.single('image'), function (req, res) {
 });
 
 app.listen(PORT, HOST, function () {
-  console.log('Voyage Medical store listening on http://' + HOST + ':' + PORT);
+  console.log('Med Doorshipp portal listening on http://' + HOST + ':' + PORT);
 });

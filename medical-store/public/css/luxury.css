@@ -1,4 +1,4 @@
-/* Voyage Medical — Luxury Design System (jewelry-store layout, medical branding) */
+/* Med Doorshipp — Luxury Design System */
 
 *, *::before, *::after { box-sizing: border-box; }
 
@@ -39,7 +39,7 @@ a:hover { color: var(--platinum); }
 
 img { max-width: 100%; height: auto; display: block; }
 
-/* ---- Top Navigation (Voyage-style) ---- */
+/* ---- Top Navigation ---- */
 
 .top-nav {
   border-bottom: 1px solid var(--champagne-border);
@@ -436,13 +436,90 @@ footer {
   padding: 40px 24px 64px;
 }
 
+.checkout-page-wide {
+  max-width: 1080px;
+}
+
 .checkout-page h1 { font-size: 1.65rem; margin-bottom: 8px; }
+
+.checkout-layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 32px;
+  align-items: start;
+  margin-top: 28px;
+}
+
+.checkout-summary {
+  border: 1px solid var(--champagne-border);
+  background: var(--obsidian-card);
+  padding: 22px 20px;
+  position: sticky;
+  top: 20px;
+}
+
+.checkout-summary h2 {
+  font-size: 1rem;
+  color: var(--champagne);
+  margin-bottom: 16px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.order-summary-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.order-summary-image {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border: 1px solid var(--champagne-border);
+}
+
+.order-summary-image-placeholder {
+  width: 100%;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--obsidian-soft);
+  color: var(--platinum-dim);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: 1px solid var(--champagne-border);
+}
+
+.order-summary-details h3 {
+  font-size: 1.05rem;
+  margin-bottom: 6px;
+}
+
+.order-summary-price {
+  color: var(--champagne);
+  font-weight: 600;
+  margin: 0 0 6px 0;
+}
+
+.order-summary-meta {
+  font-size: 0.85rem;
+  color: var(--platinum-dim);
+  margin: 0;
+}
+
+.order-summary-empty {
+  font-size: 0.9rem;
+  color: var(--platinum-muted);
+}
 
 .checkout-notice {
   background: var(--obsidian-card);
   border: 1px solid var(--champagne-border);
   padding: 18px 16px;
-  margin-bottom: 28px;
+  margin-bottom: 24px;
   font-size: 0.92rem;
   color: var(--platinum-muted);
 }
@@ -455,6 +532,36 @@ footer {
   padding: 28px 24px;
 }
 
+.form-section {
+  border: none;
+  margin: 0 0 28px 0;
+  padding: 0 0 24px 0;
+  border-bottom: 1px solid var(--champagne-border);
+}
+
+.form-section:last-of-type {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.form-section legend {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  color: var(--platinum);
+  margin-bottom: 16px;
+  padding: 0;
+  width: 100%;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.form-col label { margin-top: 0; }
+
 .checkout-form label {
   display: block;
   margin-top: 16px;
@@ -466,9 +573,9 @@ footer {
   color: var(--champagne);
 }
 
-.checkout-form label:first-of-type { margin-top: 0; }
-
-.checkout-form input[type="text"] {
+.checkout-form input[type="text"],
+.checkout-form input[type="email"],
+.checkout-form input[type="tel"] {
   width: 100%;
   padding: 12px 14px;
   background: var(--obsidian);
@@ -476,14 +583,43 @@ footer {
   color: var(--platinum);
   font-size: 1rem;
   font-family: var(--font-sans);
+  transition: var(--ease);
 }
 
 .checkout-form input:focus {
   outline: none;
   border-color: var(--champagne);
+  box-shadow: 0 0 0 3px rgba(191, 161, 95, 0.12);
 }
 
-.checkout-form button {
+.checkbox-label {
+  display: flex !important;
+  align-items: center;
+  gap: 10px;
+  margin-top: 0 !important;
+  text-transform: none !important;
+  letter-spacing: normal !important;
+  font-size: 0.88rem !important;
+  color: var(--platinum-muted) !important;
+  font-weight: 400 !important;
+  cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--champagne);
+}
+
+.billing-fields.hidden {
+  display: none;
+}
+
+.billing-fields {
+  margin-top: 16px;
+}
+
+.checkout-submit {
   width: 100%;
   margin-top: 24px;
   padding: 14px;
@@ -496,9 +632,10 @@ footer {
   text-transform: uppercase;
   cursor: pointer;
   transition: var(--ease);
+  font-family: var(--font-sans);
 }
 
-.checkout-form button:hover {
+.checkout-submit:hover {
   background: transparent;
   color: var(--champagne);
 }
@@ -650,6 +787,9 @@ footer {
   .product-detail-grid { grid-template-columns: 1fr; }
   .admin-split { grid-template-columns: 1fr; }
   .nav-links { display: none; }
+  .checkout-layout { grid-template-columns: 1fr; }
+  .checkout-summary { position: static; }
+  .form-row { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 560px) {
