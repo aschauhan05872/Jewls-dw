@@ -3,32 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Complete your white-glove door-shipment courier request with Med Doorshipp executive pharmacy dispensation.">
-  <meta name="keywords" content="Luxury medical concierge, global door-shipment pharmacy, executive prescription delivery, premium wellness dispensation">
   <title>Checkout | Med Doorshipp</title>
   <link rel="stylesheet" href="/css/luxury.css">
 </head>
 <body>
-  <header class="site-header" aria-label="Site header">
-    <div class="container-shell site-header-inner">
-      <a class="brand-logo" href="/">MED DOORSHIPP</a>
-      <ul class="nav-links" aria-label="Primary navigation">
-        <li><a href="/#catalog">Catalog</a></li>
-      </ul>
-    </div>
-  </header>
+  <!-- HEADER -->
 
   <main class="checkout-page">
     <div class="container-shell">
       <h1>Checkout</h1>
-      <p class="editorial-lead">Complete your executive pharmacy dispensation and door-shipment details below. Our dedicated team will contact you to finalize your order securely.</p>
-
+      <p class="editorial-lead">Complete your pharmacy dispensation and door-delivery details. Our team will contact you to finalize your order securely.</p>
       <div class="checkout-layout">
         <aside class="checkout-summary" aria-label="Order summary">
           <h2>Your Selection</h2>
           <!-- ORDER_SUMMARY -->
         </aside>
-
         <div class="checkout-main">
           <form class="checkout-form" id="checkout-form" action="/submit-order" method="POST">
             <input type="hidden" id="product_id" name="product_id" value="<!-- PRODUCT_ID -->">
@@ -36,203 +25,80 @@
             <section class="form-section" aria-labelledby="contact-heading">
               <h2 id="contact-heading" class="form-section-title">Contact</h2>
               <div class="form-grid form-grid-2">
-                <div class="form-grid-span-2">
-                  <label for="email" class="form-label">Email</label>
-                  <input type="email" id="email" name="email" required autocomplete="email" placeholder="you@example.com">
-                </div>
-                <div class="form-grid-span-2">
-                  <label for="contact_number" class="form-label">Phone</label>
-                  <input type="tel" id="contact_number" name="contact_number" required autocomplete="tel" placeholder="+1 555 000 0000">
-                </div>
-                <div class="form-grid-span-2">
-                  <label for="secondary_phone" class="form-label">Secondary phone (optional)</label>
-                  <p class="field-hint">Add another number if you'd prefer us to reach you there.</p>
-                  <input type="tel" id="secondary_phone" name="secondary_phone" autocomplete="tel" placeholder="Optional secondary number">
-                </div>
+                <div class="form-grid-span-2"><label for="email" class="form-label">Email</label><input type="email" id="email" name="email" required autocomplete="email"></div>
+                <div class="form-grid-span-2"><label for="contact_number" class="form-label">Phone</label><input type="tel" id="contact_number" name="contact_number" required autocomplete="tel"></div>
+                <div class="form-grid-span-2"><label for="secondary_phone" class="form-label">Secondary phone (optional)</label><input type="tel" id="secondary_phone" name="secondary_phone" autocomplete="tel"></div>
               </div>
             </section>
 
             <section class="form-section" aria-labelledby="shipping-heading">
               <h2 id="shipping-heading" class="form-section-title">Shipping Address</h2>
               <div class="form-grid form-grid-2">
-                <div>
-                  <label for="first_name" class="form-label">First name</label>
-                  <input type="text" id="first_name" name="first_name" required autocomplete="shipping given-name">
-                </div>
-                <div>
-                  <label for="last_name" class="form-label">Last name</label>
-                  <input type="text" id="last_name" name="last_name" required autocomplete="shipping family-name">
-                </div>
-                <div class="form-grid-span-2">
-                  <label for="shipping_street" class="form-label">Address</label>
-                  <input type="text" id="shipping_street" name="shipping_street" required autocomplete="shipping address-line1">
-                </div>
-                <div class="form-grid-span-2">
-                  <label for="shipping_line2" class="form-label">Apartment, suite, etc. (optional)</label>
-                  <input type="text" id="shipping_line2" name="shipping_line2" autocomplete="shipping address-line2">
-                </div>
-                <div>
-                  <label for="shipping_city" class="form-label">City</label>
-                  <input type="text" id="shipping_city" name="shipping_city" required autocomplete="shipping address-level2">
-                </div>
-                <div>
-                  <label for="shipping_state" class="form-label">State</label>
-                  <select id="shipping_state" name="shipping_state" required autocomplete="shipping address-level1">
-                    <option value="">Select state</option>
-                    <!-- US_STATES_OPTIONS -->
-                  </select>
-                </div>
-                <div>
-                  <label for="shipping_postal" class="form-label">ZIP code</label>
-                  <input type="text" id="shipping_postal" name="shipping_postal" required autocomplete="shipping postal-code" pattern="\d{5}(-\d{4})?">
-                </div>
-                <div>
-                  <label for="shipping_country" class="form-label">Country</label>
-                  <input type="text" id="shipping_country" name="shipping_country" value="United States" readonly>
-                </div>
+                <div><label for="first_name" class="form-label">First name</label><input type="text" id="first_name" name="first_name" required autocomplete="shipping given-name"></div>
+                <div><label for="last_name" class="form-label">Last name</label><input type="text" id="last_name" name="last_name" required autocomplete="shipping family-name"></div>
+                <div class="form-grid-span-2"><label for="shipping_street" class="form-label">Address</label><input type="text" id="shipping_street" name="shipping_street" required autocomplete="shipping address-line1"></div>
+                <div class="form-grid-span-2"><label for="shipping_line2" class="form-label">Apartment, suite, etc. (optional)</label><input type="text" id="shipping_line2" name="shipping_line2" autocomplete="shipping address-line2"></div>
+                <div><label for="shipping_city" class="form-label">City</label><input type="text" id="shipping_city" name="shipping_city" required autocomplete="shipping address-level2"></div>
+                <div><label for="shipping_state" class="form-label">State</label><select id="shipping_state" name="shipping_state" required><option value="">Select state</option><!-- US_STATES_OPTIONS --></select></div>
+                <div><label for="shipping_postal" class="form-label">ZIP code</label><input type="text" id="shipping_postal" name="shipping_postal" required pattern="\d{5}(-\d{4})?"></div>
+                <div><label for="shipping_country" class="form-label">Country</label><input type="text" id="shipping_country" name="shipping_country" value="United States" readonly></div>
               </div>
             </section>
 
             <section class="form-section" aria-labelledby="billing-heading">
               <h2 id="billing-heading" class="form-section-title">Billing Address</h2>
-              <label class="checkbox-label">
-                <input type="checkbox" id="billing_same_as_shipping" name="billing_same_as_shipping" checked>
-                <span>Billing address same as shipping</span>
-              </label>
-
+              <label class="checkbox-label"><input type="checkbox" id="billing_same_as_shipping" name="billing_same_as_shipping" checked><span>Billing address same as shipping</span></label>
               <div id="billing-fields" class="billing-fields hidden">
-                <div class="form-grid form-grid-2" style="margin-top: 1.5rem;">
-                  <div>
-                    <label for="billing_first_name" class="form-label">First name</label>
-                    <input type="text" id="billing_first_name" name="billing_first_name" autocomplete="billing given-name">
-                  </div>
-                  <div>
-                    <label for="billing_last_name" class="form-label">Last name</label>
-                    <input type="text" id="billing_last_name" name="billing_last_name" autocomplete="billing family-name">
-                  </div>
-                  <div class="form-grid-span-2">
-                    <label for="billing_street" class="form-label">Address</label>
-                    <input type="text" id="billing_street" name="billing_street" autocomplete="billing address-line1">
-                  </div>
-                  <div class="form-grid-span-2">
-                    <label for="billing_line2" class="form-label">Apartment, suite, etc. (optional)</label>
-                    <input type="text" id="billing_line2" name="billing_line2" autocomplete="billing address-line2">
-                  </div>
-                  <div>
-                    <label for="billing_city" class="form-label">City</label>
-                    <input type="text" id="billing_city" name="billing_city" autocomplete="billing address-level2">
-                  </div>
-                  <div>
-                    <label for="billing_state" class="form-label">State</label>
-                    <select id="billing_state" name="billing_state" autocomplete="billing address-level1">
-                      <option value="">Select state</option>
-                      <!-- US_STATES_OPTIONS -->
-                    </select>
-                  </div>
-                  <div>
-                    <label for="billing_postal" class="form-label">ZIP code</label>
-                    <input type="text" id="billing_postal" name="billing_postal" autocomplete="billing postal-code">
-                  </div>
+                <div class="form-grid form-grid-2" style="margin-top:1.5rem;">
+                  <div><label for="billing_first_name" class="form-label">First name</label><input type="text" id="billing_first_name" name="billing_first_name"></div>
+                  <div><label for="billing_last_name" class="form-label">Last name</label><input type="text" id="billing_last_name" name="billing_last_name"></div>
+                  <div class="form-grid-span-2"><label for="billing_street" class="form-label">Address</label><input type="text" id="billing_street" name="billing_street"></div>
+                  <div class="form-grid-span-2"><label for="billing_line2" class="form-label">Apartment, suite, etc.</label><input type="text" id="billing_line2" name="billing_line2"></div>
+                  <div><label for="billing_city" class="form-label">City</label><input type="text" id="billing_city" name="billing_city"></div>
+                  <div><label for="billing_state" class="form-label">State</label><select id="billing_state" name="billing_state"><option value="">Select state</option><!-- US_STATES_OPTIONS --></select></div>
+                  <div><label for="billing_postal" class="form-label">ZIP code</label><input type="text" id="billing_postal" name="billing_postal"></div>
                 </div>
               </div>
             </section>
 
-            <section class="form-section" aria-labelledby="shipping-method-heading">
-              <h2 id="shipping-method-heading" class="form-section-title">Shipping Method</h2>
-              <fieldset class="shipping-methods">
-                <legend class="sr-only" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0;">Choose a shipping method</legend>
-                <label class="shipping-option">
-                  <input type="radio" name="shipping_method" value="standard" checked>
-                  <span>
-                    <span class="shipping-option-title">Standard Shipping</span>
-                    <span class="shipping-option-desc">Delivery estimate provided when your order ships.</span>
-                    <span class="shipping-option-price">Calculated at checkout</span>
-                  </span>
-                </label>
-              </fieldset>
+            <section class="form-section">
+              <h2 class="form-section-title">Shipping Method</h2>
+              <label class="shipping-option"><input type="radio" name="shipping_method" value="standard" checked><span><span class="shipping-option-title">Standard Shipping</span><span class="shipping-option-desc">Delivery estimate provided when your order ships.</span></span></label>
             </section>
 
-            <section class="form-section" aria-labelledby="notes-heading">
-              <h2 id="notes-heading" class="form-section-title">Order Notes</h2>
-              <label for="order_notes" class="form-label">Delivery notes or special instructions (optional)</label>
-              <textarea id="order_notes" name="order_notes" rows="4" placeholder="Any delivery preferences or clinical notes for our team"></textarea>
+            <section class="form-section">
+              <h2 class="form-section-title">Order Notes</h2>
+              <textarea id="order_notes" name="order_notes" rows="4" placeholder="Delivery notes or special instructions"></textarea>
             </section>
 
-            <section class="form-section" aria-labelledby="consent-heading">
-              <h2 id="consent-heading" class="form-section-title">Before You Continue</h2>
-              <label class="checkbox-label">
-                <input type="checkbox" id="terms_accepted" name="terms_accepted" required>
-                <span>I agree to the Med Doorshipp Terms &amp; Conditions, Privacy Policy, and Returns Policy.</span>
-              </label>
-              <label class="checkbox-label muted" style="margin-top: 1rem;">
-                <input type="checkbox" id="marketing_consent" name="marketing_consent">
-                <span>Send me occasional updates about new clinical assets and wellness collections from Med Doorshipp.</span>
-              </label>
+            <section class="form-section">
+              <h2 class="form-section-title">Before You Continue</h2>
+              <label class="checkbox-label"><input type="checkbox" id="terms_accepted" name="terms_accepted" required><span>I agree to the <a href="/terms" class="text-link">Terms</a>, <a href="/privacy" class="text-link">Privacy Policy</a>, and <a href="/refund-policy" class="text-link">Refund Policy</a>.</span></label>
+              <label class="checkbox-label muted" style="margin-top:1rem;"><input type="checkbox" id="marketing_consent" name="marketing_consent"><span>Send me occasional wellness updates from Med Doorshipp.</span></label>
             </section>
 
             <button type="submit" class="btn-primary checkout-submit">Complete Your Order Request</button>
           </form>
         </div>
       </div>
-
-      <a class="back-link" href="/">Return to clinical catalog</a>
+      <a class="back-link" href="/cart">Return to cart</a>
     </div>
   </main>
 
+  <!-- FOOTER -->
+
   <script>
     (function () {
-      var params = new URLSearchParams(window.location.search);
-      var id = params.get('product_id') || params.get('id');
-      var productField = document.getElementById('product_id');
-      if (id && !productField.value) {
-        productField.value = id;
-      }
-
       var sameCheckbox = document.getElementById('billing_same_as_shipping');
       var billingFields = document.getElementById('billing-fields');
-      var shippingMap = {
-        first_name: 'billing_first_name',
-        last_name: 'billing_last_name',
-        shipping_street: 'billing_street',
-        shipping_line2: 'billing_line2',
-        shipping_city: 'billing_city',
-        shipping_state: 'billing_state',
-        shipping_postal: 'billing_postal'
-      };
-
-      function copyShippingToBilling() {
-        Object.keys(shippingMap).forEach(function (src) {
-          var srcEl = document.getElementById(src);
-          var destEl = document.getElementById(shippingMap[src]);
-          if (srcEl && destEl) destEl.value = srcEl.value;
-        });
-      }
-
+      var shippingMap = { first_name: 'billing_first_name', last_name: 'billing_last_name', shipping_street: 'billing_street', shipping_line2: 'billing_line2', shipping_city: 'billing_city', shipping_state: 'billing_state', shipping_postal: 'billing_postal' };
+      function copyShippingToBilling() { Object.keys(shippingMap).forEach(function (src) { var s = document.getElementById(src), d = document.getElementById(shippingMap[src]); if (s && d) d.value = s.value; }); }
       function toggleBillingSection() {
-        if (sameCheckbox.checked) {
-          billingFields.classList.add('hidden');
-          copyShippingToBilling();
-          ['billing_street', 'billing_city', 'billing_state', 'billing_postal', 'billing_first_name', 'billing_last_name'].forEach(function (id) {
-            document.getElementById(id).removeAttribute('required');
-          });
-        } else {
-          billingFields.classList.remove('hidden');
-          ['billing_street', 'billing_city', 'billing_state', 'billing_postal', 'billing_first_name', 'billing_last_name'].forEach(function (id) {
-            document.getElementById(id).setAttribute('required', 'required');
-          });
-        }
+        if (sameCheckbox.checked) { billingFields.classList.add('hidden'); copyShippingToBilling(); }
+        else billingFields.classList.remove('hidden');
       }
-
       sameCheckbox.addEventListener('change', toggleBillingSection);
-      Object.keys(shippingMap).forEach(function (id) {
-        var el = document.getElementById(id);
-        if (el) {
-          el.addEventListener('input', function () {
-            if (sameCheckbox.checked) copyShippingToBilling();
-          });
-        }
-      });
-
+      Object.keys(shippingMap).forEach(function (id) { var el = document.getElementById(id); if (el) el.addEventListener('input', function () { if (sameCheckbox.checked) copyShippingToBilling(); }); });
       toggleBillingSection();
     })();
   </script>

@@ -7,29 +7,21 @@
   <link rel="stylesheet" href="/css/luxury.css">
 </head>
 <body>
-  <header class="site-header" aria-label="Site header">
-    <div class="container-shell site-header-inner">
-      <a class="brand-logo" href="/">MED DOORSHIPP</a>
-    </div>
-  </header>
-
+  <!-- HEADER -->
   <main class="login-page">
     <div class="login-box">
       <h1>Administrative Entrance</h1>
-      <p>Authorized personnel only. Enter credentials to access the executive distribution dashboard.</p>
-
+      <p>Authorized personnel only.</p>
       <form class="checkout-form" action="/admin-login" method="POST">
         <label for="username" class="form-label">Username</label>
-        <input type="text" id="username" name="username" required autocomplete="username">
-
+        <input type="text" id="username" name="username" required>
         <label for="password" class="form-label">Password</label>
-        <input type="password" id="password" name="password" required autocomplete="current-password">
-
+        <input type="password" id="password" name="password" required>
         <button type="submit" class="btn-primary">Authenticate</button>
       </form>
-
-      <a class="back-link" href="/">Return to clinical catalog</a>
+      <a class="back-link" href="/">Return to site</a>
     </div>
   </main>
+  <!-- FOOTER -->
 </body>
 </html>

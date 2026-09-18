@@ -3,58 +3,38 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="<!-- PRODUCT_TITLE --> — executive pharmacy dispensation via Med Doorshipp concierge.">
-  <meta name="keywords" content="Luxury medical concierge, global door-shipment pharmacy, executive prescription delivery, premium wellness dispensation">
   <title><!-- PRODUCT_TITLE --> | Med Doorshipp</title>
   <link rel="stylesheet" href="/css/luxury.css">
 </head>
 <body>
-  <header class="site-header" aria-label="Site header">
-    <div class="container-shell site-header-inner">
-      <a class="brand-logo" href="/">MED DOORSHIPP</a>
-      <ul class="nav-links" aria-label="Primary navigation">
-        <li><a href="/#catalog">Catalog</a></li>
-        <li><a href="/admin-login">Admin</a></li>
-      </ul>
-    </div>
-  </header>
+  <!-- HEADER -->
 
   <article class="product-detail-page">
     <div class="container-shell">
-      <p class="breadcrumb"><a href="/">Clinical Catalog</a> / <!-- PRODUCT_TITLE --></p>
-
+      <p class="breadcrumb"><a href="/collections">Medicine Catalog</a> / <!-- PRODUCT_CATEGORY --> / <!-- PRODUCT_TITLE --></p>
       <div class="product-detail-grid">
-        <div class="product-detail-image">
-          <!-- PRODUCT_IMAGE -->
-        </div>
-
+        <div class="product-detail-image"><!-- PRODUCT_IMAGE --></div>
         <div class="product-detail-info">
           <h1><!-- PRODUCT_TITLE --></h1>
           <p class="product-detail-price"><!-- PRODUCT_PRICE --></p>
-
-          <div class="product-detail-meta">
-            <strong>Dosage Strength:</strong> <!-- PRODUCT_DOSAGE -->
-          </div>
-
-          <div class="product-detail-description">
-            <p><!-- PRODUCT_DESCRIPTION --></p>
-          </div>
-
+          <div class="product-detail-meta"><strong>Dosage:</strong> <!-- PRODUCT_DOSAGE --></div>
+          <div class="product-detail-description"><p><!-- PRODUCT_DESCRIPTION --></p></div>
           <!-- PRECAUTIONS_BLOCK -->
-
           <div class="product-detail-actions">
-            <a href="/checkout?product_id=<!-- PRODUCT_ID -->" class="btn-primary">Complete Your Order Request</a>
-            <a href="/" class="btn-secondary">Back to Catalog</a>
+            <form action="/cart/add" method="POST" class="inline-form">
+              <input type="hidden" name="product_id" value="<!-- PRODUCT_ID -->">
+              <input type="hidden" name="quantity" value="1">
+              <input type="hidden" name="redirect" value="/cart">
+              <button type="submit" class="btn-primary">Add to Cart</button>
+            </form>
+            <a href="/checkout?product_id=<!-- PRODUCT_ID -->" class="btn-secondary">Buy Now</a>
+            <a href="/collections" class="btn-secondary">Back to Catalog</a>
           </div>
         </div>
       </div>
     </div>
   </article>
 
-  <footer class="site-footer">
-    <div class="container-shell">
-      <p>Med Doorshipp — Executive Pharmacy Dispensation &amp; White-Glove Door-Shipment Courier</p>
-    </div>
-  </footer>
+  <!-- FOOTER -->
 </body>
 </html>
