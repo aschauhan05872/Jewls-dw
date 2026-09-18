@@ -3,73 +3,92 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Med Doorshipp — exclusive luxury medical concierge offering executive pharmacy dispensation, premium wellness products, and white-glove door-shipment courier services worldwide.">
+  <meta name="description" content="Med Doorshipp — premium medical concierge offering executive pharmacy dispensation and white-glove door-shipment courier services.">
   <meta name="keywords" content="Luxury medical concierge, global door-shipment pharmacy, executive prescription delivery, premium wellness dispensation">
   <title>Med Doorshipp | Executive Pharmacy Dispensation</title>
   <link rel="stylesheet" href="/css/luxury.css">
 </head>
 <body>
-  <nav class="top-nav" aria-label="Primary navigation">
-    <div class="top-nav-inner">
-      <a class="brand-logo" href="/">Med <span>Doorshipp</span></a>
-      <ul class="nav-links">
-        <li><a href="/">Catalog</a></li>
+  <header class="site-header" aria-label="Site header">
+    <div class="container-shell site-header-inner">
+      <a class="brand-logo" href="/">MED DOORSHIPP</a>
+      <ul class="nav-links" aria-label="Primary navigation">
+        <li><a href="/#catalog">Catalog</a></li>
         <li><a href="/#services">Services</a></li>
-        <li><a href="/admin-login">Admin</a></li>
+        <li><a href="/contact">Contact</a></li>
       </ul>
     </div>
-  </nav>
+  </header>
 
-  <section class="hero-banner" aria-label="Homepage hero">
-    <img src="/images/hero-banner.svg" alt="Med Doorshipp Executive Concierge — white-glove door-shipment and premium wellness dispensation">
-    <div class="hero-caption">
-      <h1>Elite Medical Concierge</h1>
-      <p class="tagline">Executive pharmacy dispensation with secure end-to-end encrypted logistics and white-glove door-shipment courier service for discerning members worldwide.</p>
+  <section class="hero-section" aria-label="Homepage hero">
+    <div class="hero-section-bg">
+      <img src="/images/hero-banner.svg" alt="">
+    </div>
+    <div class="container-shell hero-content">
+      <p class="hero-eyebrow">Premium Care. Doorstep Delivery.</p>
+      <h1 class="hero-title">Your Wellness, Delivered.</h1>
+      <p class="hero-subtitle">Executive pharmacy dispensation with white-glove courier service — curated clinical assets, verified for authenticity, delivered with discretion.</p>
+      <div class="hero-actions">
+        <a href="/#catalog" class="btn-primary">Browse Clinical Catalog</a>
+        <a href="/#services" class="btn-secondary">Our Services</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="services" class="trust-strip section-padding" aria-label="Concierge services">
+    <div class="container-shell trust-strip-inner">
+      <p class="trust-item"><strong>White-Glove Courier</strong>Discreet, temperature-controlled delivery with full chain-of-custody documentation.</p>
+      <p class="trust-item"><strong>Executive Pharmacy</strong>Curated clinical assets verified for authenticity, potency, and compliance.</p>
+      <p class="trust-item"><strong>Concierge Coordination</strong>Dedicated liaisons manage every shipment from inquiry through delivery.</p>
+      <p class="trust-item"><strong>Premium Wellness</strong>Members-only catalog with full precaution documentation for every product.</p>
     </div>
   </section>
 
   <main>
-    <section id="services" class="trust-indicators" aria-label="Concierge services">
-      <p><strong>White-Glove Door-Shipment Courier</strong> — discreet, temperature-controlled delivery with full chain-of-custody documentation.</p>
-      <p><strong>Executive Pharmacy Dispensation</strong> — curated clinical assets verified for authenticity, potency, and regulatory compliance.</p>
-      <p><strong>Secure End-to-End Encrypted Logistics</strong> — dedicated concierge liaisons coordinate every shipment through encrypted channels.</p>
-      <p><strong>Premium Wellness Dispensation</strong> — members-only catalog of executive-grade clinical assets with full precaution documentation.</p>
-    </section>
-
-    <section class="showcase-row" aria-label="Featured services imagery">
-      <figure class="showcase-item">
-        <img src="/images/showcase-pharmacy.svg" alt="Executive Pharmacy Dispensation">
-        <figcaption>Executive Pharmacy</figcaption>
-      </figure>
-      <figure class="showcase-item">
-        <img src="/images/showcase-courier.svg" alt="White-Glove Door-Shipment Courier">
-        <figcaption>Door-Shipment Courier</figcaption>
-      </figure>
-      <figure class="showcase-item">
-        <img src="/images/showcase-logistics.svg" alt="Secure End-to-End Encrypted Logistics">
-        <figcaption>Encrypted Logistics</figcaption>
-      </figure>
-    </section>
-
-    <section class="catalog-section" aria-label="Product catalog">
-      <h2>Clinical Asset Catalog</h2>
-      <p>Browse our exclusive inventory of premium wellness dispensation products. Select any item to view full clinical details, dosage strength, and medical precautions before requesting white-glove courier service.</p>
-
-      <div class="product-grid">
-        <!-- PRODUCTS_PLACEHOLDER -->
+    <section class="section-padding">
+      <div class="container-shell">
+        <div class="showcase-row" aria-label="Featured services imagery">
+          <figure class="showcase-item">
+            <img src="/images/showcase-pharmacy.svg" alt="Executive Pharmacy Dispensation">
+            <figcaption>Executive Pharmacy</figcaption>
+          </figure>
+          <figure class="showcase-item">
+            <img src="/images/showcase-courier.svg" alt="White-Glove Door-Shipment Courier">
+            <figcaption>Door-Shipment Courier</figcaption>
+          </figure>
+          <figure class="showcase-item">
+            <img src="/images/showcase-logistics.svg" alt="Concierge Logistics">
+            <figcaption>Concierge Logistics</figcaption>
+          </figure>
+        </div>
       </div>
     </section>
 
-    <section class="about-section" aria-label="About Med Doorshipp">
-      <h2>The Med Doorshipp Difference</h2>
-      <p>Med Doorshipp serves an exclusive clientele who expect the highest standard of pharmaceutical care, logistical precision, and personal discretion. Every clinical asset in our catalog undergoes rigorous quality verification before listing.</p>
-      <p>From initial inquiry through final door-shipment delivery, your dedicated operations coordinator manages every detail of the dispensation process — including cold-chain integrity, real-time tracking, and secure encrypted correspondence throughout.</p>
+    <section id="catalog" class="section-padding catalog-section" aria-label="Product catalog">
+      <div class="container-shell">
+        <h2>Clinical Asset Catalog</h2>
+        <p class="editorial-lead">Browse our exclusive inventory of premium wellness products. Select any item to view full clinical details, dosage strength, and medical precautions before requesting white-glove courier service.</p>
+
+        <div class="product-grid">
+          <!-- PRODUCTS_PLACEHOLDER -->
+        </div>
+      </div>
+    </section>
+
+    <section class="section-padding about-section" aria-label="About Med Doorshipp">
+      <div class="container-shell">
+        <h2>The Med Doorshipp Difference</h2>
+        <p>Med Doorshipp serves an exclusive clientele who expect the highest standard of pharmaceutical care, logistical precision, and personal discretion. Every clinical asset in our catalog undergoes rigorous quality verification before listing.</p>
+        <p>From initial inquiry through final door-shipment delivery, your dedicated operations coordinator manages every detail of the dispensation process — including cold-chain integrity, real-time tracking, and secure correspondence throughout.</p>
+      </div>
     </section>
   </main>
 
-  <footer>
-    <p>Med Doorshipp — Executive Pharmacy Dispensation &amp; White-Glove Door-Shipment Courier</p>
-    <p><a href="/admin-login">Secure Administrative Entrance</a></p>
+  <footer class="site-footer">
+    <div class="container-shell">
+      <p>Med Doorshipp — Executive Pharmacy Dispensation &amp; White-Glove Door-Shipment Courier</p>
+      <p><a href="/admin-login">Administrative Entrance</a></p>
+    </div>
   </footer>
 </body>
 </html>

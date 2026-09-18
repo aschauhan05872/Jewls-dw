@@ -7,11 +7,11 @@
   <link rel="stylesheet" href="/css/luxury.css">
 </head>
 <body>
-  <nav class="top-nav" aria-label="Primary navigation">
-    <div class="top-nav-inner">
-      <a class="brand-logo" href="/">Med <span>Doorshipp</span></a>
+  <header class="site-header" aria-label="Site header">
+    <div class="container-shell site-header-inner">
+      <a class="brand-logo" href="/">MED DOORSHIPP</a>
     </div>
-  </nav>
+  </header>
 
   <main class="login-page">
     <div class="login-box">
@@ -19,13 +19,13 @@
       <p>Authorized personnel only. Enter credentials to access the executive distribution dashboard.</p>
 
       <form class="checkout-form" action="/admin-login" method="POST">
-        <label for="username">Username</label>
+        <label for="username" class="form-label">Username</label>
         <input type="text" id="username" name="username" required autocomplete="username">
 
-        <label for="password">Password</label>
+        <label for="password" class="form-label">Password</label>
         <input type="password" id="password" name="password" required autocomplete="current-password">
 
-        <button type="submit">Authenticate</button>
+        <button type="submit" class="btn-primary">Authenticate</button>
       </form>
 
       <a class="back-link" href="/">Return to clinical catalog</a>
