@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | Jewelry Store</title>
+  <style>
+    body {
+      font-family: Georgia, "Times New Roman", serif;
+      line-height: 1.6;
+      margin: 0;
+      padding: 0;
+      background-color: #1a1a1a;
+      color: #e8e8e8;
+    }
+    header, main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    header {
+      border-bottom: 1px solid #444;
+    }
+    h1 {
+      font-size: 1.6rem;
+      margin-bottom: 0.25rem;
+    }
+    h2 {
+      font-size: 1.2rem;
+      margin-top: 32px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+    }
+    th, td {
+      border: 1px solid #444;
+      padding: 10px 12px;
+      text-align: left;
+    }
+    th {
+      background-color: #2a2a2a;
+    }
+    tr:nth-child(even) {
+      background-color: #222;
+    }
+    .add-product-form {
+      background-color: #252525;
+      border: 1px solid #444;
+      padding: 20px;
+      margin-top: 16px;
+    }
+    label {
+      display: block;
+      margin-top: 12px;
+      margin-bottom: 4px;
+      font-weight: bold;
+    }
+    input[type="text"],
+    input[type="number"],
+    textarea,
+    input[type="file"] {
+      width: 100%;
+      padding: 8px;
+      font-size: 0.95rem;
+      background-color: #2a2a2a;
+      color: #e8e8e8;
+      border: 1px solid #555;
+      box-sizing: border-box;
+    }
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+    button {
+      margin-top: 16px;
+      padding: 10px 20px;
+      font-size: 1rem;
+      background-color: #3a3a3a;
+      color: #fff;
+      border: 1px solid #666;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #4a4a4a;
+    }
+    a {
+      color: #c9a84c;
+    }
+    .nav-links {
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Administration Dashboard</h1>
+    <p class="nav-links"><a href="/">View storefront</a></p>
+  </header>
+
+  <main>
+    <section aria-label="Lead tracking">
+      <h2>Customer Leads</h2>
+      <p>All anonymous purchase inquiries submitted through the checkout form.</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Timestamp</th>
+            <th>Contact</th>
+            <th>Country</th>
+            <th>Product ID</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- LEADS_PLACEHOLDER -->
+        </tbody>
+      </table>
+    </section>
+
+    <section aria-label="Add product">
+      <h2>Add New Product</h2>
+      <p>Upload a new sterling silver piece to the storefront catalog.</p>
+
+      <form class="add-product-form" action="/admin/add-product" method="POST" enctype="multipart/form-data">
+        <label for="title">Title</label>
+        <input type="text" id="title" name="title" required placeholder="e.g. Celtic Knot Silver Ring">
+
+        <label for="price">Price (XMR)</label>
+        <input type="number" id="price" name="price" step="0.01" min="0" required placeholder="0.50">
+
+        <label for="description">Description</label>
+        <textarea id="description" name="description" required placeholder="Detailed product description for SEO and buyer reference"></textarea>
+
+        <label for="weight">Weight</label>
+        <input type="text" id="weight" name="weight" required placeholder="e.g. 12g">
+
+        <label for="size">Size</label>
+        <input type="text" id="size" name="size" required placeholder="e.g. US 9 / 19mm">
+
+        <label for="image">Product Image</label>
+        <input type="file" id="image" name="image" accept="image/*">
+
+        <button type="submit">Add Product to Catalog</button>
+      </form>
+    </section>
+  </main>
+</body>
+</html>

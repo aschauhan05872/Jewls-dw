@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Submit an anonymous purchase inquiry for 925 sterling silver jewelry with secure Monero checkout.">
+  <meta name="keywords" content="Buy 925 sterling silver jewelry, anonymous silver rings, escrow silver shop">
+  <title>Anonymous Checkout | Sterling Silver Jewelry</title>
+  <style>
+    body {
+      font-family: Georgia, "Times New Roman", serif;
+      line-height: 1.6;
+      margin: 0;
+      padding: 0;
+      background-color: #1a1a1a;
+      color: #e8e8e8;
+    }
+    main {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 32px 20px;
+    }
+    h1 {
+      font-size: 1.6rem;
+    }
+    .notice {
+      background-color: #252525;
+      border: 1px solid #444;
+      padding: 16px;
+      margin-bottom: 24px;
+      font-size: 0.95rem;
+    }
+    label {
+      display: block;
+      margin-top: 16px;
+      margin-bottom: 4px;
+      font-weight: bold;
+    }
+    input[type="text"],
+    select {
+      width: 100%;
+      padding: 10px;
+      font-size: 1rem;
+      background-color: #2a2a2a;
+      color: #e8e8e8;
+      border: 1px solid #555;
+      box-sizing: border-box;
+    }
+    button {
+      margin-top: 24px;
+      padding: 12px 24px;
+      font-size: 1rem;
+      background-color: #3a3a3a;
+      color: #fff;
+      border: 1px solid #666;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #4a4a4a;
+    }
+    a {
+      color: #c9a84c;
+    }
+    .back-link {
+      display: block;
+      margin-top: 24px;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Anonymous Purchase Inquiry</h1>
+
+    <div class="notice">
+      <p><strong>Secure Crypto Checkout via Monero</strong></p>
+      <p>Complete this form to express your intent to purchase. Provide a contact method we can reach you through (encrypted messaging handle, anonymous email relay, or similar). No personal identity documents are required.</p>
+    </div>
+
+    <form action="/submit-order" method="POST">
+      <input type="hidden" id="product_id" name="product_id" value="">
+
+      <label for="contact">Contact Method</label>
+      <input type="text" id="contact" name="contact" required placeholder="e.g. session ID, encrypted email, messaging handle">
+
+      <label for="country">Shipping Country</label>
+      <input type="text" id="country" name="country" required placeholder="e.g. Germany, United States, Japan">
+
+      <button type="submit">Submit Anonymous Order Inquiry</button>
+    </form>
+
+    <a class="back-link" href="/">Return to storefront</a>
+  </main>
+
+  <script>
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      var id = params.get('id');
+      if (id) {
+        document.getElementById('product_id').value = id;
+      }
+    })();
+  </script>
+</body>
+</html>
