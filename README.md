@@ -1,20 +1,38 @@
 # Jewls-dw
 
-Anonymous 925 sterling silver jewelry store (Express + SQLite3).
+Two local Node apps live in this repo:
 
-## Run on your Windows PC
+| App | Folder | Start |
+|-----|--------|--------|
+| **Med Doorshipp** (medicine store) | `medical-store/` | `medical-store\start.bat` |
+| Jewelry store | `jewelry-store/` | `jewelry-store\start.bat` |
+
+## Run Med Doorshipp on Windows
 
 ```bat
 mkdir "C:\Individual Projects" 2>nul
 cd /d "C:\Individual Projects"
 git clone https://github.com/aschauhan05872/Jewls-dw.git
-cd Jewls-dw\jewelry-store
+cd Jewls-dw\medical-store
 start.bat
 ```
 
-Or: `npm install` then `npm start`, then open http://127.0.0.1:8080
+If you already cloned earlier, update instead:
 
-Admin login: http://127.0.0.1:8080/admin-login  
-User: `admin` / Pass: `SecureTorPass123!`
+```bat
+cd /d "C:\Individual Projects\Jewls-dw"
+git pull origin main
+cd medical-store
+start.bat
+```
 
-See `jewelry-store/OPEN-ON-WINDOWS.md` for details.
+Then open: **http://127.0.0.1:8080**
+
+## Jewelry store
+
+```bat
+cd /d "C:\Individual Projects\Jewls-dw\jewelry-store"
+start.bat
+```
+
+> Only one app can use port 8080 at a time. Stop one before starting the other.
