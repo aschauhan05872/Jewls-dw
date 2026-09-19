@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><!-- PRODUCT_TITLE --> | Med Doorshipp</title>
+  <link rel="stylesheet" href="/css/luxury.css">
+</head>
+<body>
+  <!-- HEADER -->
+
+  <article class="product-detail-page">
+    <div class="container-shell">
+      <p class="breadcrumb"><a href="/collections">Medicine Catalog</a> / <!-- PRODUCT_CATEGORY --> / <!-- PRODUCT_TITLE --></p>
+      <div class="product-detail-grid">
+        <div class="product-detail-image"><!-- PRODUCT_IMAGE --></div>
+        <div class="product-detail-info">
+          <h1><!-- PRODUCT_TITLE --></h1>
+          <p class="product-detail-price"><!-- PRODUCT_PRICE --></p>
+          <div class="product-detail-meta"><strong>Dosage:</strong> <!-- PRODUCT_DOSAGE --></div>
+          <div class="product-detail-description"><p><!-- PRODUCT_DESCRIPTION --></p></div>
+          <!-- PRECAUTIONS_BLOCK -->
+          <div class="product-detail-actions">
+            <form action="/cart/add" method="POST" class="inline-form">
+              <input type="hidden" name="product_id" value="<!-- PRODUCT_ID -->">
+              <input type="hidden" name="quantity" value="1">
+              <input type="hidden" name="redirect" value="/cart">
+              <button type="submit" class="btn-primary" data-processing-label="Adding…">Add to Cart</button>
+            </form>
+            <a href="/checkout?product_id=<!-- PRODUCT_ID -->" class="btn-secondary">Buy Now</a>
+            <a href="/collections" class="btn-secondary">Back to Catalog</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- FOOTER -->
+</body>
+</html>

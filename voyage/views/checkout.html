@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Complete your Voyage jewelry order with secure white-glove delivery.">
+  <title>Checkout | Voyage Jewelry</title>
+  <link rel="stylesheet" href="/css/luxury.css">
+</head>
+<body>
+  <nav class="top-nav" aria-label="Primary navigation">
+    <div class="top-nav-inner">
+      <a class="brand-logo" href="/">Voyage <span>Jewelry</span></a>
+      <ul class="nav-links"><li><a href="/">Collection</a></li></ul>
+    </div>
+  </nav>
+
+  <main class="checkout-page checkout-page-wide">
+    <h1>Secure Checkout</h1>
+    <p class="tagline">Complete your details below for white-glove jewelry delivery.</p>
+
+    <div class="checkout-layout">
+      <aside class="checkout-summary" aria-label="Order summary">
+        <h2>Order Summary</h2>
+        <!-- ORDER_SUMMARY -->
+      </aside>
+
+      <div class="checkout-main">
+        <div class="checkout-notice">
+          <p><strong>Insured White-Glove Delivery</strong> — your details are used exclusively for order fulfillment and delivery coordination.</p>
+        </div>
+
+        <form class="checkout-form" id="checkout-form" action="/submit-order" method="POST">
+          <input type="hidden" id="product_id" name="product_id" value="<!-- PRODUCT_ID -->">
+
+          <fieldset class="form-section">
+            <legend>Customer Information</legend>
+            <div class="form-row">
+              <div class="form-col">
+                <label for="first_name">First Name</label>
+                <input type="text" id="first_name" name="first_name" required autocomplete="given-name" placeholder="First name">
+              </div>
+              <div class="form-col">
+                <label for="last_name">Last Name</label>
+                <input type="text" id="last_name" name="last_name" required autocomplete="family-name" placeholder="Last name">
+              </div>
+            </div>
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" required autocomplete="email" placeholder="you@example.com">
+            <label for="contact_number">Contact Number</label>
+            <input type="tel" id="contact_number" name="contact_number" required autocomplete="tel" placeholder="+1 555 000 0000">
+          </fieldset>
+
+          <fieldset class="form-section">
+            <legend>Shipping Address</legend>
+            <label for="shipping_street">Street Address</label>
+            <input type="text" id="shipping_street" name="shipping_street" required autocomplete="shipping street-address" placeholder="Street address, apartment, suite">
+            <div class="form-row">
+              <div class="form-col">
+                <label for="shipping_city">City</label>
+                <input type="text" id="shipping_city" name="shipping_city" required autocomplete="shipping address-level2" placeholder="City">
+              </div>
+              <div class="form-col">
+                <label for="shipping_state">State / Province</label>
+                <input type="text" id="shipping_state" name="shipping_state" required autocomplete="shipping address-level1" placeholder="State or province">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-col">
+                <label for="shipping_postal">Postal Code</label>
+                <input type="text" id="shipping_postal" name="shipping_postal" required autocomplete="shipping postal-code" placeholder="Postal code">
+              </div>
+              <div class="form-col">
+                <label for="shipping_country">Country</label>
+                <input type="text" id="shipping_country" name="shipping_country" required autocomplete="shipping country-name" placeholder="Country">
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset class="form-section" id="billing-section">
+            <legend>Billing Address</legend>
+            <label class="checkbox-label">
+              <input type="checkbox" id="billing_same_as_shipping" name="billing_same_as_shipping" checked>
+              Billing address same as shipping address
+            </label>
+            <div id="billing-fields" class="billing-fields hidden">
+              <label for="billing_street">Street Address</label>
+              <input type="text" id="billing_street" name="billing_street" autocomplete="billing street-address" placeholder="Billing street address">
+              <div class="form-row">
+                <div class="form-col">
+                  <label for="billing_city">City</label>
+                  <input type="text" id="billing_city" name="billing_city" autocomplete="billing address-level2" placeholder="City">
+                </div>
+                <div class="form-col">
+                  <label for="billing_state">State / Province</label>
+                  <input type="text" id="billing_state" name="billing_state" autocomplete="billing address-level1" placeholder="State or province">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-col">
+                  <label for="billing_postal">Postal Code</label>
+                  <input type="text" id="billing_postal" name="billing_postal" autocomplete="billing postal-code" placeholder="Postal code">
+                </div>
+                <div class="form-col">
+                  <label for="billing_country">Country</label>
+                  <input type="text" id="billing_country" name="billing_country" autocomplete="billing country-name" placeholder="Country">
+                </div>
+              </div>
+            </div>
+          </fieldset>
+
+          <button type="submit" class="checkout-submit">Place Order</button>
+        </form>
+      </div>
+    </div>
+    <a class="back-link" href="/">Return to collection</a>
+  </main>
+
+  <script>
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      var id = params.get('product_id') || params.get('id');
+      var productField = document.getElementById('product_id');
+      if (id && !productField.value) productField.value = id;
+
+      var sameCheckbox = document.getElementById('billing_same_as_shipping');
+      var billingFields = document.getElementById('billing-fields');
+      var shippingFields = ['shipping_street', 'shipping_city', 'shipping_state', 'shipping_postal', 'shipping_country'];
+      var billingMap = ['billing_street', 'billing_city', 'billing_state', 'billing_postal', 'billing_country'];
+
+      function copyShippingToBilling() {
+        for (var i = 0; i < shippingFields.length; i++) {
+          document.getElementById(billingMap[i]).value = document.getElementById(shippingFields[i]).value;
+        }
+      }
+
+      function toggleBillingSection() {
+        if (sameCheckbox.checked) {
+          billingFields.classList.add('hidden');
+          copyShippingToBilling();
+          billingMap.forEach(function (id) { document.getElementById(id).removeAttribute('required'); });
+        } else {
+          billingFields.classList.remove('hidden');
+          billingMap.forEach(function (id) { document.getElementById(id).setAttribute('required', 'required'); });
+        }
+      }
+
+      sameCheckbox.addEventListener('change', toggleBillingSection);
+      shippingFields.forEach(function (id) {
+        document.getElementById(id).addEventListener('input', function () {
+          if (sameCheckbox.checked) copyShippingToBilling();
+        });
+      });
+      toggleBillingSection();
+    })();
+  </script>
+</body>
+</html>
