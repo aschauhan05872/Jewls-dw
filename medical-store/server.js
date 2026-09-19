@@ -223,7 +223,7 @@ function buildCatalogCard(p) {
           '<form action="/cart/add" method="POST" class="inline-form">' +
             '<input type="hidden" name="product_id" value="' + p.id + '">' +
             '<input type="hidden" name="quantity" value="1">' +
-            '<button type="submit" class="btn-primary">Add to Cart</button>' +
+            '<button type="submit" class="btn-primary" data-processing-label="Adding…">Add to Cart</button>' +
           '</form>' +
         '</div></div></article>'
   );
@@ -445,16 +445,16 @@ app.get('/cart', function (req, res) {
               '<form action="/cart/update" method="POST" class="cart-qty-form">' +
                 '<input type="hidden" name="product_id" value="' + p.id + '">' +
                 '<label>Qty <input type="number" name="quantity" value="' + p.cartQty + '" min="1" max="99"></label>' +
-                '<button type="submit" class="btn-secondary btn-sm">Update</button>' +
+                '<button type="submit" class="btn-secondary btn-sm" data-processing-label="Updating…">Update</button>' +
               '</form>' +
               '<form action="/cart/remove" method="POST" class="inline-form">' +
                 '<input type="hidden" name="product_id" value="' + p.id + '">' +
-                '<button type="submit" class="btn-ghost">Remove</button>' +
+                '<button type="submit" class="btn-ghost" data-processing-label="Removing…">Remove</button>' +
               '</form>' +
             '</div></article>';
       });
       content += '</div>';
-      checkoutCta = '<a href="/checkout" class="btn-primary">Continue to Checkout</a>';
+      checkoutCta = '<a href="/checkout" class="btn-primary" id="cart-checkout-link">Continue to Checkout</a>';
     }
     res.type('html').send(renderPage('cart.html', req, { CART_CONTENT: content, CHECKOUT_CTA: checkoutCta }));
   });

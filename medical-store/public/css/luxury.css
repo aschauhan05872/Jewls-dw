@@ -120,6 +120,52 @@ select:focus-visible {
   color: var(--med-white);
 }
 
+.btn-primary:disabled,
+.btn-secondary:disabled,
+.btn-ghost:disabled {
+  opacity: 0.75;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.btn-loading {
+  gap: 0.5rem;
+  pointer-events: none;
+  cursor: wait;
+}
+
+.btn-loading::after {
+  content: '';
+  width: 0.875rem;
+  height: 0.875rem;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: btn-spin 0.65s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes btn-spin {
+  to { transform: rotate(360deg); }
+}
+
+body.site-processing a.is-disabled,
+form.is-processing ~ .cart-page-actions a {
+  pointer-events: none;
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.cart-page-actions a.is-disabled {
+  pointer-events: none;
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+form.is-processing {
+  opacity: 0.92;
+}
+
 .btn-secondary {
   display: inline-flex;
   align-items: center;
