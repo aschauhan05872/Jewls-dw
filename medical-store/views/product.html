@@ -16,18 +16,29 @@
         <div class="product-detail-image"><!-- PRODUCT_IMAGE --></div>
         <div class="product-detail-info">
           <h1><!-- PRODUCT_TITLE --></h1>
-          <p class="product-detail-price"><!-- PRODUCT_PRICE --></p>
+          <p class="product-detail-price" id="dynamic-product-price"><!-- PRODUCT_PRICE --></p>
           <div class="product-detail-meta"><strong>Dosage:</strong> <!-- PRODUCT_DOSAGE --></div>
           <div class="product-detail-description"><p><!-- PRODUCT_DESCRIPTION --></p></div>
           <!-- PRECAUTIONS_BLOCK -->
+          <div
+            id="pack-pricing-root"
+            class="pack-pricing-panel"
+            data-product-id="<!-- PRODUCT_ID -->"
+            data-original="<!-- ORIGINAL_PRICE_VALUE -->"
+            data-discount="<!-- DISCOUNT_PRICE_VALUE -->"
+          >
+            <!-- PACK_SELECT -->
+            <p id="pack-deal-hint" class="pack-deal-hint" hidden></p>
+          </div>
           <div class="product-detail-actions">
             <form action="/cart/add" method="POST" class="inline-form">
               <input type="hidden" name="product_id" value="<!-- PRODUCT_ID -->">
               <input type="hidden" name="quantity" value="1">
               <input type="hidden" name="redirect" value="/cart">
+              <input type="hidden" name="pack_size" id="pack_size_hidden" value="180">
               <button type="submit" class="btn-primary" data-processing-label="Adding…">Add to Cart</button>
             </form>
-            <a href="/checkout?product_id=<!-- PRODUCT_ID -->" class="btn-secondary">Buy Now</a>
+            <a href="/checkout?product_id=<!-- PRODUCT_ID -->&amp;pack_size=180" class="btn-secondary" id="buy-now-link">Buy Now</a>
             <a href="/collections" class="btn-secondary">Back to Catalog</a>
           </div>
         </div>
@@ -36,5 +47,16 @@
   </article>
 
   <!-- FOOTER -->
+  <script src="/js/pack-pricing.js"></script>
+  <script>
+    (function () {
+      var select = document.getElementById('pack_size');
+      var hidden = document.getElementById('pack_size_hidden');
+      if (!select || !hidden) return;
+      function syncHidden() { hidden.value = select.value; }
+      select.addEventListener('change', syncHidden);
+      syncHidden();
+    })();
+  </script>
 </body>
 </html>

@@ -514,7 +514,102 @@ form.is-processing {
 .product-price {
   font-size: 0.875rem;
   color: var(--forest-green);
+  margin: 0 0 0.35rem;
+}
+
+.product-pack-note {
+  font-size: 0.75rem;
+  color: var(--warm-taupe);
   margin: 0 0 0.75rem;
+}
+
+.price-block {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.4rem 0.55rem;
+}
+
+.price-original {
+  color: var(--warm-taupe);
+  text-decoration: line-through;
+  font-size: 0.92em;
+}
+
+.price-sale {
+  color: var(--forest-green);
+  font-weight: 600;
+}
+
+.price-badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #8a3b12;
+  background: #f4e6d8;
+  border: 1px solid #e2c9b0;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+}
+
+.pack-pricing-panel {
+  margin: 0 0 1.5rem;
+  padding: 1rem 1.125rem;
+  border: 1px solid var(--line);
+  background: var(--med-white);
+  border-radius: 6px;
+}
+
+.pack-size-label {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--forest-green);
+  margin-bottom: 0.4rem;
+}
+
+.pack-size-select {
+  width: 100%;
+  max-width: 18rem;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #fff;
+  color: var(--forest-green);
+  font-size: 0.9375rem;
+}
+
+.pack-deal-hint {
+  margin: 0.75rem 0 0;
+  padding: 0.65rem 0.75rem;
+  border-left: 3px solid #c47a3a;
+  background: #faf3eb;
+  color: #6a3d1a;
+  font-size: 0.875rem;
+}
+
+.admin-help {
+  font-size: 0.875rem;
+  color: var(--warm-taupe);
+  margin: 0 0 1rem;
+}
+
+.product-detail-price {
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  line-height: 1.15;
+  color: var(--forest-green);
+  margin-bottom: 1.25rem;
+}
+
+.product-detail-price .price-original {
+  font-size: 0.55em;
+}
+
+.product-detail-price .price-badge {
+  font-family: var(--font-body, Georgia, serif);
+  vertical-align: middle;
 }
 
 .product-description {
@@ -607,14 +702,6 @@ form.is-processing {
   font-size: clamp(2rem, 4vw, 2.75rem);
   color: var(--forest-green);
   margin-bottom: 0.75rem;
-}
-
-.product-detail-price {
-  font-family: var(--font-display);
-  font-size: clamp(1.75rem, 3vw, 2.25rem);
-  line-height: 1;
-  color: var(--forest-green);
-  margin-bottom: 1.25rem;
 }
 
 .product-detail-meta {

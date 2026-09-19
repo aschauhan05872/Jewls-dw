@@ -8,6 +8,12 @@ const fs = require('fs');
 
 const seedMedicines = require('./lib/seed-medicines');
 const { validateCheckout } = require('./lib/checkout-validation');
+const {
+  PACK_SIZES,
+  DEFAULT_PACK,
+  getPackQuote,
+  normalizePackSize
+} = require('./lib/pack-pricing');
 
 const app = express();
 const PORT = 8080;
@@ -71,7 +77,7 @@ app.use(session({
 const db = new sqlite3.Database(path.join(__dirname, 'database.db'));
 
 function migrateColumns() {
-  ['category TEXT', 'slug TEXT'].forEach(function (col) {
+  ['category TEXT', 'slug TEXT', 'original_price_usd TEXT'].forEach(function (col) {
     db.run('ALTER TABLE products ADD COLUMN ' + col, function () {});
   });
   [
@@ -109,16 +115,28 @@ db.serialize(function () {
 
 function seedCatalog() {
   db.get('SELECT COUNT(*) AS count FROM products WHERE slug IS NOT NULL AND slug != ""', [], function (err, row) {
-    if (err || (row && row.count >= seedMedicines.length)) return;
-    db.run('DELETE FROM products', [], function () {
-      var stmt = db.prepare(
-        'INSERT INTO products (title, price_usd, description, dosage_strength, precautions, image, category, slug) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
-      );
-      seedMedicines.forEach(function (med) {
-        stmt.run([med.title, med.price_usd, med.description, med.dosage_strength, med.precautions, med.image, med.category, med.slug]);
+    if (err) return;
+    if (!row || row.count < seedMedicines.length) {
+      db.run('DELETE FROM products', [], function () {
+        var stmt = db.prepare(
+          'INSERT INTO products (title, price_usd, original_price_usd, description, dosage_strength, precautions, image, category, slug) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
+        );
+        seedMedicines.forEach(function (med) {
+          stmt.run([
+            med.title, med.price_usd, med.original_price_usd, med.description,
+            med.dosage_strength, med.precautions, med.image, med.category, med.slug
+          ]);
+        });
+        stmt.finalize();
+        console.log('Seeded ' + seedMedicines.length + ' medicines');
       });
-      stmt.finalize();
-      console.log('Seeded ' + seedMedicines.length + ' medicines');
+      return;
+    }
+    seedMedicines.forEach(function (med) {
+      db.run(
+        'UPDATE products SET price_usd = ?, original_price_usd = ?, title = ?, description = ?, dosage_strength = ?, precautions = ?, image = ?, category = ? WHERE slug = ?',
+        [med.price_usd, med.original_price_usd, med.title, med.description, med.dosage_strength, med.precautions, med.image, med.category, med.slug]
+      );
     });
   });
 }
@@ -140,8 +158,53 @@ function escapeHtml(str) {
 
 function formatPriceUsd(price) {
   var num = parseFloat(price);
-  if (isNaN(num)) return escapeHtml(price);
+  if (isNaN(num)) return escapeHtml(String(price || '')) + ' USD';
   return '$' + num.toFixed(2) + ' USD';
+}
+
+function productOriginal(p) {
+  var original = parseFloat(p && p.original_price_usd);
+  var sale = parseFloat(p && p.price_usd);
+  if (!isNaN(original) && original > 0) return original;
+  if (!isNaN(sale)) return sale;
+  return 0;
+}
+
+function productSale(p) {
+  var sale = parseFloat(p && p.price_usd);
+  return isNaN(sale) ? 0 : sale;
+}
+
+function buildPriceHtml(original, discounted, options) {
+  options = options || {};
+  var quote = typeof original === 'object' && original.discounted != null
+    ? original
+    : getPackQuote(original, discounted, options.packSize || DEFAULT_PACK);
+  var suffix = options.suffix ? ' ' + escapeHtml(options.suffix) : '';
+  var html = '<span class="price-block">';
+  if (quote.percentOff > 0) {
+    html += '<span class="price-original">' + formatPriceUsd(quote.original) + '</span> ';
+  }
+  html += '<span class="price-sale">' + formatPriceUsd(quote.discounted) + suffix + '</span>';
+  if (quote.percentOff > 0) {
+    html += ' <span class="price-badge">' + quote.percentOff + '% OFF</span>';
+  }
+  html += '</span>';
+  return html;
+}
+
+function buildPackSelectHtml(selectedPack) {
+  var selected = normalizePackSize(selectedPack);
+  return (
+    '<label class="pack-size-label" for="pack_size">Pack size</label>' +
+    '<select id="pack_size" name="pack_size" class="pack-size-select" required>' +
+      PACK_SIZES.map(function (size) {
+        var sel = size === selected ? ' selected' : '';
+        var note = size === DEFAULT_PACK ? ' (Best value)' : '';
+        return '<option value="' + size + '"' + sel + '>Pack of ' + size + note + '</option>';
+      }).join('') +
+    '</select>'
+  );
 }
 
 function truncateText(text, maxLen) {
@@ -182,7 +245,8 @@ function productImageSrc(p) {
 function buildMedicalImageAlt(p) {
   var title = p.title || 'Clinical Asset';
   var dosage = p.dosage_strength || 'verified dosage';
-  var price = formatPriceUsd(p.price_usd);
+  var quote = getPackQuote(productOriginal(p), productSale(p), p.packSize || DEFAULT_PACK);
+  var price = formatPriceUsd(quote.discounted);
   return 'Med Doorshipp - ' + title + ' - ' + dosage + ' - Executive Prescription Delivery ' + price;
 }
 
@@ -210,19 +274,22 @@ function buildPrecautionsDrawer(productId, precautionsText) {
 }
 
 function buildCatalogCard(p) {
+  var quote = getPackQuote(productOriginal(p), productSale(p), DEFAULT_PACK);
   return (
     '<article class="product-card">' +
       '<a href="/product/' + p.id + '">' + buildProductImage(p, 'product-image', true) + '</a>' +
       '<div class="product-card-body">' +
         '<p class="product-meta-line">' + escapeHtml(p.category || 'medicine') + ' · Dosage Potency: ' + escapeHtml(p.dosage_strength) + '</p>' +
         '<h2 class="product-title"><a href="/product/' + p.id + '">' + escapeHtml(p.title) + '</a></h2>' +
-        '<p class="product-price">' + formatPriceUsd(p.price_usd) + '</p>' +
+        '<p class="product-price">' + buildPriceHtml(quote) + '</p>' +
+        '<p class="product-pack-note">Shown for Pack of ' + DEFAULT_PACK + '</p>' +
         '<p class="product-description">' + truncateText(p.description, 100) + '</p>' +
         '<div class="product-actions">' +
           '<a href="/product/' + p.id + '" class="btn-secondary">View Details</a>' +
           '<form action="/cart/add" method="POST" class="inline-form">' +
             '<input type="hidden" name="product_id" value="' + p.id + '">' +
             '<input type="hidden" name="quantity" value="1">' +
+            '<input type="hidden" name="pack_size" value="' + DEFAULT_PACK + '">' +
             '<button type="submit" class="btn-primary" data-processing-label="Adding…">Add to Cart</button>' +
           '</form>' +
         '</div></div></article>'
@@ -291,7 +358,9 @@ function buildOrderSummaryItems(products) {
   var html = '';
   var subtotal = 0;
   products.forEach(function (p) {
-    subtotal += parseFloat(p.price_usd) * p.cartQty;
+    var quote = getPackQuote(productOriginal(p), productSale(p), p.packSize || DEFAULT_PACK);
+    var lineTotal = quote.discounted * p.cartQty;
+    subtotal += lineTotal;
     var src = productImageSrc(p);
     var img = src
       ? '<img src="' + escapeHtml(src) + '" alt="' + escapeHtml(buildMedicalImageAlt(p)) + '" class="cart-line-image">'
@@ -300,11 +369,12 @@ function buildOrderSummaryItems(products) {
       '<div class="cart-line-item">' + img +
         '<div class="cart-line-details">' +
           '<h3>' + escapeHtml(p.title) + '</h3>' +
-          '<p class="order-summary-meta">Qty ' + p.cartQty + ' · ' + escapeHtml(p.dosage_strength) + '</p>' +
-          '<p class="order-summary-price">' + formatPriceUsd(parseFloat(p.price_usd) * p.cartQty) + '</p>' +
+          '<p class="order-summary-meta">Qty ' + p.cartQty + ' · Pack of ' + quote.packSize + ' · ' + escapeHtml(p.dosage_strength) + '</p>' +
+          '<p class="order-summary-price">' + buildPriceHtml(quote) + '</p>' +
+          (p.cartQty > 1 ? '<p class="order-summary-meta">Line total: ' + formatPriceUsd(lineTotal) + '</p>' : '') +
         '</div></div>';
   });
-  html += '<div class="cart-subtotal-row"><span>Subtotal</span><span>' + formatPriceUsd(subtotal) + '</span></div>';
+  html += '<div class="cart-subtotal-row"><span>Subtotal (USD)</span><span>' + formatPriceUsd(subtotal) + '</span></div>';
   return html;
 }
 
@@ -325,9 +395,14 @@ function loadCartProducts(req, callback) {
   var placeholders = ids.map(function () { return '?'; }).join(',');
   db.all('SELECT * FROM products WHERE id IN (' + placeholders + ')', ids, function (err, products) {
     if (err) return callback(err);
-    var merged = products.map(function (p) {
-      var cartItem = cart.find(function (c) { return c.product_id === p.id; });
-      return Object.assign({}, p, { cartQty: cartItem ? cartItem.quantity : 1 });
+    var merged = [];
+    cart.forEach(function (cartItem) {
+      var p = products.find(function (row) { return row.id === cartItem.product_id; });
+      if (!p) return;
+      merged.push(Object.assign({}, p, {
+        cartQty: cartItem.quantity || 1,
+        packSize: normalizePackSize(cartItem.pack_size)
+      }));
     });
     callback(null, merged);
   });
@@ -386,15 +461,19 @@ app.get('/product/:id', function (req, res) {
         '<main class="page-centered section-padding"><div class="container-shell success-card"><h1>Medicine Not Found</h1><p><a href="/collections" class="btn-primary">Browse Catalog</a></p></div></main>', req
       ));
     }
+    var quote = getPackQuote(productOriginal(p), productSale(p), DEFAULT_PACK);
     var html = renderPage('product.html', req, {});
     html = html.replace(/<!-- PRODUCT_TITLE -->/g, escapeHtml(p.title));
-    html = html.replace('<!-- PRODUCT_PRICE -->', formatPriceUsd(p.price_usd));
+    html = html.replace('<!-- PRODUCT_PRICE -->', buildPriceHtml(quote));
     html = html.replace('<!-- PRODUCT_DOSAGE -->', escapeHtml(p.dosage_strength));
     html = html.replace('<!-- PRODUCT_DESCRIPTION -->', escapeHtml(p.description));
     html = html.replace('<!-- PRODUCT_IMAGE -->', buildProductImage(p, 'product-image'));
-    html = html.replace('<!-- PRODUCT_ID -->', String(p.id));
+    html = html.replace(/<!-- PRODUCT_ID -->/g, String(p.id));
     html = html.replace('<!-- PRECAUTIONS_BLOCK -->', buildPrecautionsDrawer(p.id, p.precautions));
     html = html.replace('<!-- PRODUCT_CATEGORY -->', escapeHtml(p.category || 'medicine'));
+    html = html.replace('<!-- PACK_SELECT -->', buildPackSelectHtml(DEFAULT_PACK));
+    html = html.replace('<!-- ORIGINAL_PRICE_VALUE -->', String(productOriginal(p)));
+    html = html.replace('<!-- DISCOUNT_PRICE_VALUE -->', String(productSale(p)));
     res.type('html').send(html);
   });
 });
@@ -402,10 +481,13 @@ app.get('/product/:id', function (req, res) {
 app.post('/cart/add', function (req, res) {
   var productId = parseInt(req.body.product_id, 10);
   var quantity = parseInt(req.body.quantity, 10) || 1;
+  var packSize = normalizePackSize(req.body.pack_size);
   var cart = getCart(req);
-  var existing = cart.find(function (c) { return c.product_id === productId; });
+  var existing = cart.find(function (c) {
+    return c.product_id === productId && normalizePackSize(c.pack_size) === packSize;
+  });
   if (existing) existing.quantity += quantity;
-  else cart.push({ product_id: productId, quantity: quantity });
+  else cart.push({ product_id: productId, quantity: quantity, pack_size: packSize });
   var redirect = req.body.redirect || req.get('Referer') || '/cart';
   res.redirect(redirect);
 });
@@ -413,14 +495,21 @@ app.post('/cart/add', function (req, res) {
 app.post('/cart/update', function (req, res) {
   var productId = parseInt(req.body.product_id, 10);
   var quantity = parseInt(req.body.quantity, 10);
-  var cart = getCart(req).filter(function (c) { return c.product_id !== productId; });
-  if (quantity > 0) cart.push({ product_id: productId, quantity: quantity });
+  var packSize = normalizePackSize(req.body.pack_size);
+  var cart = getCart(req).filter(function (c) {
+    return !(c.product_id === productId && normalizePackSize(c.pack_size) === packSize);
+  });
+  if (quantity > 0) cart.push({ product_id: productId, quantity: quantity, pack_size: packSize });
   req.session.cart = cart;
   res.redirect('/cart');
 });
 
 app.post('/cart/remove', function (req, res) {
-  req.session.cart = getCart(req).filter(function (c) { return c.product_id !== parseInt(req.body.product_id, 10); });
+  var productId = parseInt(req.body.product_id, 10);
+  var packSize = normalizePackSize(req.body.pack_size);
+  req.session.cart = getCart(req).filter(function (c) {
+    return !(c.product_id === productId && normalizePackSize(c.pack_size) === packSize);
+  });
   res.redirect('/cart');
 });
 
@@ -434,21 +523,24 @@ app.get('/cart', function (req, res) {
     } else {
       content = '<div class="cart-items-list">';
       products.forEach(function (p) {
+        var quote = getPackQuote(productOriginal(p), productSale(p), p.packSize);
         var src = productImageSrc(p);
         content +=
           '<article class="cart-page-item">' +
             (src ? '<img src="' + escapeHtml(src) + '" alt="' + escapeHtml(buildMedicalImageAlt(p)) + '" class="cart-line-image">' : '<div class="cart-line-image cart-line-placeholder" aria-label="' + escapeHtml(buildMedicalImageAlt(p)) + '"></div>') +
             '<div class="cart-line-details">' +
               '<h2>' + escapeHtml(p.title) + '</h2>' +
-              '<p class="order-summary-meta">' + escapeHtml(p.dosage_strength) + '</p>' +
-              '<p class="order-summary-price">' + formatPriceUsd(p.price_usd) + ' each</p>' +
+              '<p class="order-summary-meta">' + escapeHtml(p.dosage_strength) + ' · Pack of ' + quote.packSize + '</p>' +
+              '<p class="order-summary-price">' + buildPriceHtml(quote, null, { suffix: 'each' }) + '</p>' +
               '<form action="/cart/update" method="POST" class="cart-qty-form">' +
                 '<input type="hidden" name="product_id" value="' + p.id + '">' +
+                '<input type="hidden" name="pack_size" value="' + quote.packSize + '">' +
                 '<label>Qty <input type="number" name="quantity" value="' + p.cartQty + '" min="1" max="99"></label>' +
                 '<button type="submit" class="btn-secondary btn-sm" data-processing-label="Updating…">Update</button>' +
               '</form>' +
               '<form action="/cart/remove" method="POST" class="inline-form">' +
                 '<input type="hidden" name="product_id" value="' + p.id + '">' +
+                '<input type="hidden" name="pack_size" value="' + quote.packSize + '">' +
                 '<button type="submit" class="btn-ghost" data-processing-label="Removing…">Remove</button>' +
               '</form>' +
             '</div></article>';
@@ -462,12 +554,13 @@ app.get('/cart', function (req, res) {
 
 app.get('/checkout', function (req, res) {
   var productId = req.query.product_id || req.query.id;
+  var packSize = normalizePackSize(req.query.pack_size);
   function sendCheckout(products) {
     res.type('html').send(renderCheckoutPage(req, products, {}, {}));
   }
   if (productId) {
     db.get('SELECT * FROM products WHERE id = ?', [productId], function (err, p) {
-      sendCheckout(p ? [Object.assign({}, p, { cartQty: 1 })] : []);
+      sendCheckout(p ? [Object.assign({}, p, { cartQty: 1, packSize: packSize })] : []);
     });
     return;
   }
@@ -517,7 +610,16 @@ app.post('/submit-order', function (req, res) {
   loadCartProducts(req, function (err, cartProducts) {
     var product_id = body.product_id || (cartProducts[0] ? cartProducts[0].id : null);
     var cart_snapshot = JSON.stringify(cartProducts.map(function (p) {
-      return { id: p.id, title: p.title, qty: p.cartQty, price: p.price_usd };
+      var quote = getPackQuote(productOriginal(p), productSale(p), p.packSize || DEFAULT_PACK);
+      return {
+        id: p.id,
+        title: p.title,
+        qty: p.cartQty,
+        pack_size: quote.packSize,
+        original_price_usd: quote.original,
+        price_usd: quote.discounted,
+        currency: 'USD'
+      };
     }));
     var billing_street = body.billing_street, billing_city = body.billing_city;
     var billing_state = body.billing_state, billing_postal = body.billing_postal;
@@ -607,9 +709,23 @@ app.get('/admin-dashboard', function (req, res) {
 
 app.post('/admin/add-product', upload.single('image'), function (req, res) {
   if (!req.session.isAdmin) return res.redirect('/admin-login');
+  var original = req.body.original_price_usd;
+  var discounted = req.body.price_usd;
+  if (!original || parseFloat(original) < parseFloat(discounted)) {
+    original = discounted;
+  }
   db.run(
-    'INSERT INTO products (title, price_usd, description, dosage_strength, precautions, image) VALUES (?, ?, ?, ?, ?, ?)',
-    [req.body.title, req.body.price_usd, req.body.description, req.body.dosage_strength, req.body.precautions, req.file ? req.file.filename : null],
+    'INSERT INTO products (title, price_usd, original_price_usd, description, dosage_strength, precautions, image, category) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+    [
+      req.body.title,
+      discounted,
+      original,
+      req.body.description,
+      req.body.dosage_strength,
+      req.body.precautions,
+      req.file ? req.file.filename : null,
+      req.body.category || 'prescription'
+    ],
     function (err) { res.redirect(err ? '/admin-login' : '/admin-dashboard'); }
   );
 });
